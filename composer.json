@@ -1,0 +1,21 @@
+{
+    "name": "perminder-klair/kato-core",
+    "description": "Kato Core for Kato CMS",
+    "keywords": ["yii2", "kato", "cms"],
+    "homepage": "https://github.com/perminder-klair/kato-core",
+    "type": "yii2-extension",
+    "license": "The MIT License",
+    "authors": [
+        {
+            "name": "Parminder Klair",
+            "email": "perminder.klair@gmail.com",
+            "homepage": "http://www.webonise.co.uk/"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {"kato\\": ""}
+    }
+}
