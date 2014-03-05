@@ -3,9 +3,8 @@
 namespace kato\components;
 
 use Yii;
-use yii\db\Schema;
-use yii\base\Application;
 use backend\models\Setting;
+use yii\helpers\HtmlPurifier;
 
 /**
  * Usage
@@ -45,5 +44,17 @@ class Kato extends \yii\base\Component
         }
 
         return false;
+    }
+
+    /**
+     * returns page slug if set
+     * @return string
+     */
+    public function pageSlug()
+    {
+        if (isset($_GET['slug'])) {
+            return HtmlPurifier::process($_GET['slug']);
+        }
+        return '';
     }
 }
