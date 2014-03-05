@@ -24,15 +24,17 @@ use backend\models\Setting;
 
 class Kato extends \yii\base\Component 
 {
-	/**
-	 * Get settings for Kato
-	 * Usage:
-	 *
-	 * ```php
-	 * $setting = Yii::$app->kato->setting('site_name');
-	 * ```
-	 */
-	public static function setting($key)
+    /**
+     * Get settings for Kato
+     * Usage:
+     *
+     * ```php
+     * $setting = Yii::$app->kato->setting('site_name');
+     * ```
+     * @param $key
+     * @return bool
+     */
+    public static function setting($key)
     {
         $model = Setting::find()
             ->where(['define' => $key])
