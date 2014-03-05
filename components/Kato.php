@@ -4,7 +4,9 @@ namespace kato\components;
 
 use Yii;
 use backend\models\Setting;
+use backend\models\Block;
 use yii\helpers\HtmlPurifier;
+use yii\web\BadRequestHttpException;
 
 /**
  * Usage
@@ -23,6 +25,7 @@ use yii\helpers\HtmlPurifier;
 
 class Kato extends \yii\base\Component 
 {
+
     /**
      * Get settings for Kato
      * Usage:
@@ -39,7 +42,7 @@ class Kato extends \yii\base\Component
             ->where(['define' => $key])
             ->one();
 
-        if ($model) {
+        if (!is_null($model)) {
             return $model->value;
         }
 
@@ -55,6 +58,32 @@ class Kato extends \yii\base\Component
         if (isset($_GET['slug'])) {
             return HtmlPurifier::process($_GET['slug']);
         }
-        return '';
+        return false;
+    }
+
+    /**
+     * Returns HTML content of block
+     * Usage:
+     *  $setting = Yii::$app->kato->block('block_slug');
+     * @param null $slug
+     * @return bool
+     * @throws \yii\web\BadRequestHttpException
+     */
+    public function block($slug = null)
+    {
+        if (is_null($slug)) {
+            throw new BadRequestHttpException('Block slug not specified.');
+        }
+
+        //TODO check parent
+        $model = Block::find()
+            ->where(['slug' => $slug])
+            ->one();
+
+        if (is_null($model)) {
+            return false;
+        }
+
+        return $model->content_html;
     }
 }
