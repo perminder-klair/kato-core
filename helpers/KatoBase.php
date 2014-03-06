@@ -204,7 +204,7 @@ class KatoBase extends \yii\base\Object
             while(false !== ($file = readdir($handle))){
                 if($file != "." && $file != ".."){
                     if(is_dir($directory. "/" . $file)){
-                        $array_items = array_merge($array_items, KatoHelper::get_files($directory. "/" . $file, $ext));
+                        $array_items = array_merge($array_items, self::get_files($directory. "/" . $file, $ext));
                     } else {
                         $file = $directory . "/" . $file;
                         if(!$ext || strstr($file, $ext)) $array_items[] = preg_replace("/\/\//si", "/", $file);
@@ -231,7 +231,7 @@ class KatoBase extends \yii\base\Object
         $script_url  = (isset($_SERVER['PHP_SELF'])) ? $_SERVER['PHP_SELF'] : '';
         if($request_url != $script_url) $url = trim(preg_replace('/'. str_replace('/', '\/', str_replace('index.php', '', $script_url)) .'/', '', $request_url, 1), '/');
 
-        $protocol = KatoHelper::get_protocol();
+        $protocol = self::get_protocol();
         return rtrim(str_replace($url, '', $protocol . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']), '/');
     }
 
@@ -281,6 +281,6 @@ class KatoBase extends \yii\base\Object
             $result = "";
         }
 
-        return KatoHelper::limit_words(strip_tags($result), $wordLimit);
+        return self::limit_words(strip_tags($result), $wordLimit);
     }
 }
