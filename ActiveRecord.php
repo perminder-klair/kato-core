@@ -5,22 +5,6 @@ namespace kato;
 class ActiveRecord extends \yii\db\ActiveRecord
 {
     /**
-     * @return array
-     */
-    public function behaviors()
-    {
-        return [
-            'timestamp' => [
-                'class' => 'yii\behaviors\TimestampBehavior',
-                'attributes' => [
-                    ActiveRecord::EVENT_BEFORE_INSERT => ['create_time', 'update_time', 'publish_time'],
-                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
-                ],
-            ],
-        ];
-    }
-
-    /**
      * Actions to be taken before saving the record.
      * @param bool $insert
      * @return bool whether the record can be saved
@@ -29,32 +13,12 @@ class ActiveRecord extends \yii\db\ActiveRecord
     {
         if (parent::beforeSave($insert)) {
 
-            //$now = date('Y-m-d H:i:s', time());
             $user_id = \Yii::$app->user->id;
 
             if ($this->isNewRecord) {
-
-                // We are creating a new record.
-                /*if ($this->hasAttribute('create_time'))
-                    $this->create_time = $now;
-
-                if ($this->hasAttribute('update_time'))
-                    $this->update_time = $now;
-
-                if ($this->hasAttribute('publish_time'))
-                    $this->publish_time = $now;*/
-
                 if ($this->hasAttribute('created_by'))
                     $this->created_by = $user_id;
-
-                if ($this->hasAttribute('title'))
-                    $this->title = $this->newPostTitle;
-
             } else {
-                // We are updating an existing record.
-                /*if ($this->hasAttribute('update_time'))
-                    $this->update_time = $now;*/
-
                 if ($this->hasAttribute('updated_by'))
                     $this->updated_by = $user_id;
             }
@@ -65,11 +29,16 @@ class ActiveRecord extends \yii\db\ActiveRecord
 
     /**
      * Return basic select options for the record.
-     * @return array the options.
+     * @param string $key
+     * @param string $value
+     * @return array
      */
-    public static function getSelectOptions()
+    public static function getSelectOptions($key = 'id', $value = 'title')
     {
-        //return CHtml::listData(static::model()->findAll(), 'id', 'title'); TODO fix it
+        $parents = self::find()
+            ->all();
+
+        return \yii\helpers\ArrayHelper::map($parents, $key, $value);
     }
 
     /**
@@ -81,15 +50,5 @@ class ActiveRecord extends \yii\db\ActiveRecord
         return static::find()
             ->orderBy('id DESC')
             ->one();
-    }
-
-    /**
-     * Returns New Post's Title
-     * @return string
-     */
-    protected function getNewPostTitle()
-    {
-        $id = $this->getLastRow()->id + 1;
-        return 'New ' . $id;
     }
 }
