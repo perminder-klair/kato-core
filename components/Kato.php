@@ -63,8 +63,7 @@ class Kato extends \yii\base\Component
 
     /**
      * Returns HTML content of block
-     * Usage:
-     *  $setting = Yii::$app->kato->block('block_slug');
+     * Usage: \Yii::$app->kato->block('block_slug');
      * @param null $slug
      * @return bool
      * @throws \yii\web\BadRequestHttpException
@@ -75,13 +74,17 @@ class Kato extends \yii\base\Component
             throw new BadRequestHttpException('Block slug not specified.');
         }
 
-        //TODO check parent
         $model = Block::find()
             ->where(['slug' => $slug])
             ->one();
 
         if (is_null($model)) {
             return false;
+        }
+
+        //TODO check parent
+        if (!is_null($model->parent)) {
+            //var_dump($model->parent);exit;
         }
 
         return $model->content_html;
