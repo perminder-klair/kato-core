@@ -89,4 +89,47 @@ class Kato extends \yii\base\Component
 
         return $model->content_html;
     }
+
+    /**
+     * Uploads the file
+     * If content ID and media type is provided and makes the join
+     * @param null $contentId
+     * @param null $mediaType
+     * @return \backend\models\Media|bool
+     */
+    public function mediaUpload($contentId = null, $mediaType = null)
+    {
+        if (isset($_POST['Media']['file'])) {
+            $media = new \backend\models\Media();
+            $uploadTime = date("Y-m-W");
+            $media->file = $_POST['Media']['file'];
+            $file = \yii\web\UploadedFile::getInstance($media, 'file');
+
+            $media->filename = \kato\helpers\KatoBase::sanitizeFile($file->baseName). '-' . \kato\helpers\KatoBase::genRandomString(4) . '.' . $file->extension;
+            $media->mimeType = $file->type;
+            $media->byteSize = $file->size;
+            $media->extension = $file->extension;
+            $media->source = basename(\Yii::$app->params['uploadPath']) . '/' . $uploadTime . '/' . $media->filename;
+
+            //Save to media table
+            if ($media->save(false)) {
+                //If saved upload the file
+                $uploadPath = \Yii::$app->params['uploadPath'] .  $uploadTime;
+                if (!is_dir($uploadPath)) mkdir($uploadPath, 0777, true);
+                if ($file->saveAs($uploadPath . '/' . $media->filename)) {
+
+                    if ($contentId !== null) {
+                        $contentMedia = new \backend\models\ContentMedia();
+                        $contentMedia->media_id = $media->id;
+                        $contentMedia->content_id = $contentId;
+                        if ($mediaType !== null) $contentMedia->media_type = $mediaType;
+                        $contentMedia->save();
+                    }
+                    return $media;
+                }
+            }
+        }
+
+        return false;
+    }
 }
