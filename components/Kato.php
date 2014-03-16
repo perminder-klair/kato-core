@@ -93,9 +93,11 @@ class Kato extends \yii\base\Component
     /**
      * Uploads the file
      * If content ID and media type is provided and makes the join
+     *
      * @param null $contentId
      * @param null $mediaType
      * @return \backend\models\Media|bool
+     * @throws \yii\web\BadRequestHttpException
      */
     public function mediaUpload($contentId = null, $mediaType = null)
     {
@@ -104,6 +106,10 @@ class Kato extends \yii\base\Component
             $uploadTime = date("Y-m-W");
             $media->file = $_POST['Media']['file'];
             $file = \yii\web\UploadedFile::getInstance($media, 'file');
+
+            if ($file->size > Yii::$app->params['maxUploadSize']) {
+                throw new BadRequestHttpException('Max upload size limit reached');
+            }
 
             $media->filename = \kato\helpers\KatoBase::sanitizeFile($file->baseName). '-' . \kato\helpers\KatoBase::genRandomString(4) . '.' . $file->extension;
             $media->mimeType = $file->type;
