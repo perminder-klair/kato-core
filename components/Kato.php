@@ -7,6 +7,7 @@ use backend\models\Setting;
 use backend\models\Block;
 use yii\helpers\HtmlPurifier;
 use yii\web\BadRequestHttpException;
+use yii\helpers\Json;
 
 /**
  * Usage
@@ -92,25 +93,25 @@ class Kato extends \yii\base\Component
 
     /**
      * Uploads the file
-     * If content ID and media type is provided and makes the join
+     * if success returns json array for media data
+     * Usage: echo \Yii::$app->kato->mediaUpload();
      *
-     * @param null $contentId
-     * @param null $mediaType
-     * @return \backend\models\Media|bool
+     * @param string $fileName
+     * @return bool|string
      * @throws \yii\web\BadRequestHttpException
      */
-    public function mediaUpload($contentId = null, $mediaType = null)
+    public function mediaUpload($fileName = 'file')
     {
-        if (isset($_POST['Media']['file'])) {
+        if (isset($_FILES[$fileName])) {
             $media = new \backend\models\Media();
             $uploadTime = date("Y-m-W");
-            $media->file = $_POST['Media']['file'];
-            $file = \yii\web\UploadedFile::getInstance($media, 'file');
+            $file = \yii\web\UploadedFile::getInstanceByName($fileName);
 
             if ($file->size > Yii::$app->params['maxUploadSize']) {
                 throw new BadRequestHttpException('Max upload size limit reached');
             }
 
+            //$media->file = $file;
             $media->filename = \kato\helpers\KatoBase::sanitizeFile($file->baseName). '-' . \kato\helpers\KatoBase::genRandomString(4) . '.' . $file->extension;
             $media->mimeType = $file->type;
             $media->byteSize = $file->size;
@@ -122,16 +123,9 @@ class Kato extends \yii\base\Component
                 //If saved upload the file
                 $uploadPath = \Yii::$app->params['uploadPath'] .  $uploadTime;
                 if (!is_dir($uploadPath)) mkdir($uploadPath, 0777, true);
-                if ($file->saveAs($uploadPath . '/' . $media->filename)) {
 
-                    if ($contentId !== null) {
-                        $contentMedia = new \backend\models\ContentMedia();
-                        $contentMedia->media_id = $media->id;
-                        $contentMedia->content_id = $contentId;
-                        if ($mediaType !== null) $contentMedia->media_type = $mediaType;
-                        $contentMedia->save();
-                    }
-                    return $media;
+                if ($file->saveAs($uploadPath . '/' . $media->filename)) {
+                    return Json::encode($media);
                 }
             }
         }
