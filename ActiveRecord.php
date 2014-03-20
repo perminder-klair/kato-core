@@ -2,6 +2,9 @@
 
 namespace kato;
 
+use yii\helpers\Inflector;
+use ReflectionClass;
+
 class ActiveRecord extends \yii\db\ActiveRecord
 {
 
@@ -72,5 +75,45 @@ class ActiveRecord extends \yii\db\ActiveRecord
         return static::find()
             ->orderBy('id DESC')
             ->one();
+    }
+
+    /**
+     * Returns lists of status available
+     * @return array
+     */
+    public function listStatus()
+    {
+        static $data;
+        if ($data === null) {
+
+            // create a reflection class to get constants
+            $refl = new ReflectionClass(get_called_class());
+            $constants = $refl->getConstants();
+
+            // check for status constants (e.g., STATUS_ACTIVE)
+            foreach ($constants as $constantName => $constantValue) {
+
+                // add prettified name to dropdown
+                if (strpos($constantName, "STATUS_") === 0) {
+                    $prettyName = str_replace("STATUS_", "", $constantName);
+                    $prettyName = Inflector::humanize(strtolower($prettyName));
+                    $data[$constantValue] = $prettyName;
+                }
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Returns status label
+     * @return bool
+     */
+    public function getStatusLabel()
+    {
+        if ($status =$this->listStatus()) {
+            return $status[$this->status];
+        }
+        return false;
     }
 }
