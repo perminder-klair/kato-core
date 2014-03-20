@@ -41,6 +41,9 @@ use yii\web\VerbFilter;
  */
 class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->baseControllerClass) . "\n" ?>
 {
+    public $pageTitle = '<?= $modelClass ?>';
+    public $pageIcon = 'fa fa-bars';
+
     public function behaviors()
     {
         return [
@@ -85,12 +88,46 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
     */
     public function actionAdmin()
     {
+        $this->layout = '@backend/views/layouts/main';
+
         $searchModel = new <?= isset($searchModelAlias) ? $searchModelAlias : $searchModelClass ?>;
         $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
 
-        return $this->render('admin', [
+        $getColumns = [
+            ['class' => 'yii\grid\SerialColumn'],
+<?php
+$count = 0;
+if (($tableSchema = $generator->getTableSchema()) === false) {
+    foreach ($generator->getColumnNames() as $name) {
+        if (++$count < 6) {
+            echo "            '" . $name . "',\n";
+        } else {
+            echo "            // '" . $name . "',\n";
+        }
+    }
+} else {
+    foreach ($tableSchema->columns as $column) {
+        $format = $generator->generateColumnFormat($column);
+        if (++$count < 6) {
+            echo "            '" . $column->name . ($format === 'text' ? "" : ":" . $format) . "',\n";
+        } else {
+            echo "            // '" . $column->name . ($format === 'text' ? "" : ":" . $format) . "',\n";
+        }
+    }
+}
+?>
+            ['class' => 'backend\components\ActionColumn'],
+        ];
+
+        $meta['title'] = $this->pageTitle;
+        $meta['description'] = 'List all <?= $modelClass ?>';
+        $meta['pageIcon'] = $this->pageIcon;
+
+        return $this->render('@backend/views/global/index', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
+            'meta' => $meta,
+            'getColumns' => $getColumns,
         ]);
     }
 
@@ -134,11 +171,16 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
 
         $model = $this->findModel(<?= $actionParams ?>);
 
+        $meta['title'] = $this->pageTitle;
+        $meta['description'] = 'Update <?= $modelClass ?>';
+        $meta['pageIcon'] = $this->pageIcon;
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', <?= $urlParams ?>]);
         } else {
-            return $this->render('update', [
+            return $this->render('@backend/views/global/update', [
                 'model' => $model,
+                'meta' => $meta,
             ]);
         }
     }
