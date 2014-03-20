@@ -23,6 +23,10 @@ class DefaultTitle extends Behavior {
 
     public function setDefaultValue()
     {
+        if (!empty($this->owner->{$this->attribute})) {
+            return true;
+        }
+
         $id = $this->getLastRow()->id + 1;
         $this->owner->{$this->attribute} = $this->defaultPrefix . '-' . $id;
     }
