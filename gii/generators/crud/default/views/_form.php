@@ -20,6 +20,13 @@ echo "<?php\n";
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use kartik\widgets\Select2;
+use kartik\widgets\DatePicker;
+use kartik\markdown\MarkdownEditor;
+use backend\models\Tag;
+use kato\helpers\KatoBase;
+
+$tag = new Tag;
 
 /**
  * @var yii\web\View $this
