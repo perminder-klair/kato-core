@@ -29,17 +29,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= "<?= " ?>Html::encode($this->title) ?></h1>
 
-    <p>
-        <?= "<?= " ?>Html::a('Update', ['update', <?= $urlParams ?>], ['class' => 'btn btn-primary']) ?>
-        <?= "<?= " ?>Html::a('Delete', ['delete', <?= $urlParams ?>], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
-
     <?= "<?= " ?>DetailView::widget([
         'model' => $model,
         'attributes' => [

@@ -176,7 +176,8 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
         $meta['pageIcon'] = $this->pageIcon;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', <?= $urlParams ?>]);
+            Yii::$app->session->setFlash('success', '<?= $modelClass ?> has been updated');
+            return $this->redirect(['update', <?= $urlParams ?>]);
         } else {
             return $this->render('@backend/views/global/update', [
                 'model' => $model,
@@ -194,6 +195,7 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
     public function actionDelete(<?= $actionParams ?>)
     {
         $this->findModel(<?= $actionParams ?>)->delete();
+        Yii::$app->session->setFlash('success', '<?= $modelClass ?> has been deleted');
 
         return $this->redirect(['index']);
     }
