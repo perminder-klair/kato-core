@@ -97,6 +97,11 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
                 'updateTags' => true,
                 'tagType' => self::className(),
             ],
+                'defaultTitle' => [
+                'class' => 'kato\behaviors\DefaultTitle',
+                'attribute' => 'title',
+                'defaultPrefix' => '<?= $className ?>',
+            ],
         ];
     }
 
