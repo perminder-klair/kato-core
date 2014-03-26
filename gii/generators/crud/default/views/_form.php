@@ -21,6 +21,7 @@ echo "<?php\n";
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use backend\models\Tag;
+use backend\widgets\Media;
 use kartik\widgets\Select2;
 use kartik\widgets\DatePicker;
 use kartik\markdown\MarkdownEditor;
@@ -61,7 +62,9 @@ $tag = new Tag;
 
     <div class="tab-pane" id="media">
 
-        media here
+        <?= Media::widget([
+            'model' => $model,
+        ]); ?>
 
     </div>
 
