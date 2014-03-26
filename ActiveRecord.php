@@ -15,7 +15,7 @@ class ActiveRecord extends \yii\db\ActiveRecord
     public function getContentMedia()
     {
         return $this->hasMany(\backend\models\ContentMedia::className(), ['content_id' => 'id'])
-            ->where('media_type = :type', [':type' => $this->className()]);
+            ->where('content_type = :type', [':type' => $this->className()]);
     }
 
     /**
