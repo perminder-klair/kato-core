@@ -41,7 +41,7 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
     */
     public static function tableName()
     {
-    return '<?= $tableName ?>';
+        return '<?= $tableName ?>';
     }
 
     /**
@@ -49,7 +49,7 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
     */
     public function rules()
     {
-    return [<?= "\n            " . implode(",\n            ", $rules) . "\n        " ?>];
+        return [<?= "\n            " . implode(",\n            ", $rules) . "\n        " ?>];
     }
 
     /**
@@ -57,7 +57,7 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
     */
     public function attributeLabels()
     {
-    return [
+        return [
     <?php foreach ($labels as $name => $label): ?>
         <?= "'$name' => '" . addslashes($label) . "',\n" ?>
     <?php endforeach; ?>

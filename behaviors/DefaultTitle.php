@@ -27,7 +27,11 @@ class DefaultTitle extends Behavior {
             return true;
         }
 
-        $id = $this->getLastRow()->id + 1;
+        if ($this->getLastRow()) {
+            $id = $this->getLastRow()->id + 1;
+        } else {
+            $id = 1;
+        }
         $this->owner->{$this->attribute} = $this->defaultPrefix . '-' . $id;
     }
 

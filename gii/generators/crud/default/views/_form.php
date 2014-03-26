@@ -20,11 +20,11 @@ echo "<?php\n";
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use backend\models\Tag;
 use kartik\widgets\Select2;
 use kartik\widgets\DatePicker;
 use kartik\markdown\MarkdownEditor;
-use backend\models\Tag;
-use kato\helpers\KatoBase;
+use kartik\widgets\SwitchInput;
 
 $tag = new Tag;
 
@@ -35,17 +35,34 @@ $tag = new Tag;
  */
 ?>
 
-<div class="<?= Inflector::camel2id(StringHelper::basename($generator->modelClass)) ?>-form">
+<div class="block-title">
+    <ul class="nav nav-tabs" data-toggle="tabs">
+        <li class="active"><a href="#form">Form</a></li>
+        <li class=""><a href="#media">Media</a></li>
+    </ul>
+</div>
 
-    <?= "<?php " ?>$form = ActiveForm::begin(); ?>
+<div class="tab-content">
+
+    <div class="tab-pane active <?= Inflector::camel2id(StringHelper::basename($generator->modelClass)) ?>-form" id="form">
+
+        <?= "<?php " ?>$form = ActiveForm::begin(); ?>
 
 <?php foreach ($safeAttributes as $attribute) {
     echo "    <?= " . $generator->generateActiveField($attribute) . " ?>\n\n";
 } ?>
-    <div class="form-group">
-        <?= "<?= " ?>Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <div class="form-group">
+            <?= "<?= " ?>Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        </div>
+
+        <?= "<?php " ?>ActiveForm::end(); ?>
+
     </div>
 
-    <?= "<?php " ?>ActiveForm::end(); ?>
+    <div class="tab-pane" id="media">
+
+        media here
+
+    </div>
 
 </div>

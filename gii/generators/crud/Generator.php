@@ -35,22 +35,22 @@ class Generator extends \yii\gii\generators\crud\Generator
         ])";
         } elseif ($column->type === 'timestamp') {
             return "\$form->field(\$model, '$attribute')->widget(DatePicker::classname(), [
-            'options' => [
-                'placeholder' => 'Select date ...',
-            ],
-            'pluginOptions' => [
-                'format' => 'yyyy-mm-dd',
-                'todayHighlight' => true
-            ],
-        ])";
+                'options' => [
+                    'placeholder' => 'Select date ...',
+                ],
+                'pluginOptions' => [
+                    'format' => 'yyyy-mm-dd',
+                    'todayHighlight' => true
+                ],
+            ])";
         } elseif ($column->phpType === 'boolean' || $column->name === 'active' || $column->name === 'deleted') {
-            return "\$form->field(\$model, '$attribute')->checkbox()";
+            return "\$form->field(\$model, '$attribute')->widget(SwitchInput::classname(), [
+                'pluginOptions' => [
+                    'size' => 'small'
+                ],
+            ])";
         } elseif ($column->type === 'text') {
-            return "\$form->field(\$model, '$attribute')->textarea(['rows' => 6])";
-            /*return "MarkdownEditor::widget([
-                'model' => \$model,
-                'attribute' => '$attribute',
-            ])";*/
+            return "\$form->field(\$model, '$attribute')->widget(MarkdownEditor::classname())";
         } else {
             if (preg_match('/^(password|pass|passwd|passcode)$/i', $column->name)) {
                 $input = 'passwordInput';
