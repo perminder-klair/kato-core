@@ -12,6 +12,11 @@ class Request extends \yii\web\Request
         return str_replace($this->web, "", parent::getBaseUrl()) . $this->adminUrl;
     }
 
+    public function getAdminBaseUrl()
+    {
+        return '/backend/web';
+    }
+
 
     /*
         If you don't have this function, the admin site will 404 if you leave off
