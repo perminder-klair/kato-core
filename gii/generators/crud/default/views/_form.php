@@ -21,19 +21,19 @@ echo "<?php\n";
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use backend\models\Tag;
-use backend\widgets\Media;
 use kartik\widgets\Select2;
 use kartik\widgets\DatePicker;
 use kartik\markdown\MarkdownEditor;
 use kartik\widgets\SwitchInput;
+use backend\widgets\Media;
 
 $tag = new Tag;
 
 /**
- * @var yii\web\View $this
- * @var <?= ltrim($generator->modelClass, '\\') ?> $model
- * @var yii\widgets\ActiveForm $form
- */
+* @var yii\web\View $this
+* @var <?= ltrim($generator->modelClass, '\\') ?> $model
+* @var yii\widgets\ActiveForm $form
+*/
 ?>
 
 <div class="block-title">
@@ -49,9 +49,9 @@ $tag = new Tag;
 
         <?= "<?php " ?>$form = ActiveForm::begin(); ?>
 
-<?php foreach ($safeAttributes as $attribute) {
-    echo "    <?= " . $generator->generateActiveField($attribute) . " ?>\n\n";
-} ?>
+        <?php foreach ($safeAttributes as $attribute) {
+            echo "    <?= " . $generator->generateActiveField($attribute) . " ?>\n\n";
+        } ?>
         <div class="form-group">
             <?= "<?= " ?>Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
         </div>
@@ -62,8 +62,8 @@ $tag = new Tag;
 
     <div class="tab-pane" id="media">
 
-        <?= Media::widget([
-            'model' => $model,
+        <?= "<?= " ?>Media::widget([
+        'model' => $model,
         ]); ?>
 
     </div>
