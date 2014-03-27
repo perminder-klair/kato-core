@@ -76,7 +76,7 @@ class Kato extends \yii\base\Component
         }
 
         $model = Block::find()
-            ->where(['slug' => $slug])
+            ->where(['title' => $slug])
             ->one();
 
         if (is_null($model)) {
@@ -88,7 +88,7 @@ class Kato extends \yii\base\Component
             //var_dump($model->parent);exit;
         }
 
-        return $model->content_html;
+        return $model->render();
     }
 
     /**
