@@ -35,6 +35,7 @@ use <?= ltrim($generator->searchModelClass, '\\') . (isset($searchModelAlias) ? 
 use <?= ltrim($generator->baseControllerClass, '\\') ?>;
 use yii\web\NotFoundHttpException;
 use yii\web\VerbFilter;
+use yii\helpers\Url;
 
 /**
  * <?= $controllerClass ?> implements the CRUD actions for <?= $modelClass ?> model.
@@ -168,6 +169,8 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
     public function actionUpdate(<?= $actionParams ?>)
     {
         $this->layout = '@backend/views/layouts/main';
+
+        Url::remember();
 
         $model = $this->findModel(<?= $actionParams ?>);
 
