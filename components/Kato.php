@@ -8,6 +8,10 @@ use backend\models\Block;
 use yii\helpers\HtmlPurifier;
 use yii\web\BadRequestHttpException;
 use yii\helpers\Json;
+use yii\web\UploadedFile;
+use kato\helpers\KatoBase;
+use yii\helpers\Html;
+use kartik\markdown\Markdown;
 
 /**
  * Usage
@@ -91,6 +95,35 @@ class Kato extends \yii\base\Component
         return $model->render();
     }
 
+
+
+    /**
+     * Renders blocks and out as html
+     * Usage: \Yii::$app->kato->renderBlock($this->content);
+     * @param null $content
+     * @return string
+     */
+    public function renderBlock($content = null)
+    {
+        if (!is_array($content)) {
+            $content = Json::decode($content);
+        }
+
+        $blocks = '';
+        if (!empty($content)) {
+            foreach ($content['data'] as $block) {
+                if ($block['type'] === 'heading') {
+                    $blocks .= Html::tag('h2', $block['data']['text']);
+                }
+                if ($block['type'] === 'text' || $block['type'] === 'list') {
+                    $blocks .= Markdown::convert($block['data']['text']);
+                }
+            }
+        }
+
+        return $blocks;
+    }
+
     /**
      * Uploads the file
      * if success returns json array for media data
@@ -100,19 +133,24 @@ class Kato extends \yii\base\Component
      * @return bool|string
      * @throws \yii\web\BadRequestHttpException
      */
-    public function mediaUpload($fileName = 'file')
+    public function mediaUpload($fileName = 'file', $useFile = false)
     {
         if (isset($_FILES[$fileName])) {
             $media = new \backend\models\Media();
             $uploadTime = date("Y-m-W");
-            $file = \yii\web\UploadedFile::getInstanceByName($fileName);
+            if ($useFile === false) {
+                $file = UploadedFile::getInstanceByName($fileName);
+            } else {
+                $files = UploadedFile::getInstancesByName($fileName);
+                $file = $files[0];
+            }
 
             if ($file->size > Yii::$app->params['maxUploadSize']) {
                 throw new BadRequestHttpException('Max upload size limit reached');
             }
 
             //$media->file = $file;
-            $media->filename = \kato\helpers\KatoBase::sanitizeFile($file->baseName). '-' . \kato\helpers\KatoBase::genRandomString(4) . '.' . $file->extension;
+            $media->filename = KatoBase::sanitizeFile($file->baseName). '-' . KatoBase::genRandomString(4) . '.' . $file->extension;
             $media->mimeType = $file->type;
             $media->byteSize = $file->size;
             $media->extension = $file->extension;
