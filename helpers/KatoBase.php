@@ -5,14 +5,6 @@ namespace kato\helpers;
 class KatoBase extends \yii\base\Object
 {
     /**
-     * Converts to money format
-     */
-    public static function formatMoney($amount) {
-        setlocale(LC_MONETARY, 'en_GB.UTF-8');
-        return money_format('%n', $amount);
-    }
-
-    /**
      * delete directory recursivly
      */
     public static function deleteDirectory($dir, $keepDir=false) {
@@ -140,43 +132,6 @@ class KatoBase extends \yii\base\Object
     }
 
     /**
-     * Sanitize database inputs
-     * @param $input
-     * @return string
-     */
-    public static function sanitizeDb($input) {
-        if (is_array($input)) {
-            foreach($input as $var=>$val) {
-                $output[$var] = sanitize($val);
-            }
-        }
-        else {
-            if (get_magic_quotes_gpc()) {
-                $input = stripslashes($input);
-            }
-            $input  = cleanInput($input);
-            $output = mysql_real_escape_string($input);
-        }
-        return $output;
-    }
-    /**
-     * @param $input
-     * @return mixed
-     */
-    function cleanInput($input) {
-
-        $search = array(
-            '@<script[^>]*?>.*?</script>@si',   // Strip out javascript
-            '@<[\/\!]*?[^<>]*?>@si',            // Strip out HTML tags
-            '@<style[^>]*?>.*?</style>@siU',    // Strip style tags properly
-            '@<![\s\S]*?--[ \t\n\r]*>@'         // Strip multi-line comments
-        );
-
-        $output = preg_replace($search, '', $input);
-        return $output;
-    }
-
-    /**
      * Helper function to limit the words in a string
      *
      * @param string $string the given string
@@ -214,36 +169,6 @@ class KatoBase extends \yii\base\Object
             closedir($handle);
         }
         return $array_items;
-    }
-
-    /**
-     * Helper function to work out the base URL
-     *
-     * @return string the base url
-     */
-    public static function base_url()
-    {
-        global $config;
-        if(isset($config['base_url']) && $config['base_url']) return $config['base_url'];
-
-        $url = '';
-        $request_url = (isset($_SERVER['REQUEST_URI'])) ? $_SERVER['REQUEST_URI'] : '';
-        $script_url  = (isset($_SERVER['PHP_SELF'])) ? $_SERVER['PHP_SELF'] : '';
-        if($request_url != $script_url) $url = trim(preg_replace('/'. str_replace('/', '\/', str_replace('index.php', '', $script_url)) .'/', '', $request_url, 1), '/');
-
-        $protocol = self::get_protocol();
-        return rtrim(str_replace($url, '', $protocol . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']), '/');
-    }
-
-    /**
-     * Tries to guess the server protocol. Used in base_url()
-     *
-     * @return string the current protocol
-     */
-    public static function get_protocol()
-    {
-        preg_match("|^HTTP[S]?|is",$_SERVER['SERVER_PROTOCOL'],$m);
-        return strtolower($m[0]);
     }
 
     /**
