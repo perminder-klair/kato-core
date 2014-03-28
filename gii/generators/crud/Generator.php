@@ -50,7 +50,7 @@ class Generator extends \yii\gii\generators\crud\Generator
                 ],
             ])";
         } elseif ($column->type === 'text') {
-            return "\$form->field(\$model, '$attribute')->widget(MarkdownEditor::classname())";
+            return "\$form->field(\$model, '$attribute')->widget(ImperaviWidget::classname())";
         } else {
             if (preg_match('/^(password|pass|passwd|passcode)$/i', $column->name)) {
                 $input = 'passwordInput';
