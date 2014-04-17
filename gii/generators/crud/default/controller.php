@@ -34,7 +34,8 @@ use <?= ltrim($generator->modelClass, '\\') ?>;
 use <?= ltrim($generator->searchModelClass, '\\') . (isset($searchModelAlias) ? " as $searchModelAlias" : "") ?>;
 use <?= ltrim($generator->baseControllerClass, '\\') ?>;
 use yii\web\NotFoundHttpException;
-use yii\web\VerbFilter;
+use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 use yii\helpers\Url;
 
 /**
@@ -49,7 +50,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
     {
         return [
             'access' => [
-                'class' => \yii\web\AccessControl::className(),
+                'class' => AccessControl::className(),
                 'only' => ['admin', 'create', 'update', 'delete'],
                     'rules' => [
                     [
@@ -93,6 +94,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
 
         $searchModel = new <?= isset($searchModelAlias) ? $searchModelAlias : $searchModelClass ?>;
         $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
+        $controllerName = $this->getUniqueId();
 
         $getColumns = [
             ['class' => 'yii\grid\SerialColumn'],
@@ -127,6 +129,7 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
         return $this->render('@backend/views/global/index', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
+            'controllerName' => $controllerName,
             'meta' => $meta,
             'getColumns' => $getColumns,
         ]);
@@ -162,7 +165,7 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
 
     /**
      * Updates an existing <?= $modelClass ?> model.
-     * If update is successful, the browser will be redirected to the 'view' page.
+     * If update is successful, the browser will be redirected back to the 'update' page.
      * <?= implode("\n     * ", $actionParamComments) . "\n" ?>
      * @return mixed
      */
@@ -173,6 +176,7 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
         Url::remember();
 
         $model = $this->findModel(<?= $actionParams ?>);
+        $controllerName = $this->getUniqueId();
 
         $meta['title'] = $this->pageTitle;
         $meta['description'] = 'Update <?= $modelClass ?>';
@@ -185,6 +189,7 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
             return $this->render('@backend/views/global/update', [
                 'model' => $model,
                 'meta' => $meta,
+                'controllerName' => $controllerName,
             ]);
         }
     }
@@ -226,7 +231,7 @@ if (count($pks) === 1) {
     $nullCheck = '';
 }
 ?>
-        if (<?= $nullCheck ?>($model = <?= $modelClass ?>::find(<?= $condition ?>)) !== null) {
+        if (<?= $nullCheck ?>($model = <?= $modelClass ?>::findOne(<?= $condition ?>)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
