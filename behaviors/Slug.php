@@ -17,11 +17,14 @@ class Slug extends Behavior
 {
     public $sourceAttributeName = 'name';
     public $slugAttributeName = 'slug';
-
+    //The replacement to use for spaces in the slug
     public $replacement = '-';
+    // Whether to return the string in lowercase or not
     public $lowercase = true;
-
+    //Check if the slug value is unique, add number if not
     public $unique = true;
+    //Only set if source attribute is empty
+    public $onlyIfEmpty = false;
 
     public function events()
     {
@@ -32,7 +35,7 @@ class Slug extends Behavior
 
     public function generateSlug()
     {
-        if (empty($this->owner->{$this->slugAttributeName}) && !empty($this->owner->{$this->sourceAttributeName})) {
+        if (($this->onlyIfEmpty === true) || (empty($this->owner->{$this->slugAttributeName}) && !empty($this->owner->{$this->sourceAttributeName}))) {
             $slug = Inflector::slug(
                 $this->owner->{$this->sourceAttributeName},
                 $this->replacement,
