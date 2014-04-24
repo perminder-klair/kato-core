@@ -4,6 +4,7 @@ namespace kato;
 
 use yii\helpers\Inflector;
 use ReflectionClass;
+use yii\helpers\Url;
 
 class ActiveRecord extends \yii\db\ActiveRecord
 {
@@ -21,12 +22,18 @@ class ActiveRecord extends \yii\db\ActiveRecord
     /**
      * Relate Media
      * Usage: $model->media();
+     * @param null $type
      * @return static
      */
-    public function getMedia()
+    public function getMedia($type = null)
     {
-        return $this->hasMany(\backend\models\Media::className(), ['id' => 'media_id'])
-            ->via('contentMedia');
+        $media = $this->hasMany(\backend\models\Media::className(), ['id' => 'media_id']);
+        if ($type !== null) {
+            $media->where('media_type = :type', [':type' => $type]);
+        }
+        $media->via('contentMedia');
+
+        return $media;
     }
 
     /**
@@ -115,5 +122,13 @@ class ActiveRecord extends \yii\db\ActiveRecord
             return $status[$this->status];
         }
         return false;
+    }
+
+    /**
+     * Returns permalink to model
+     * @return string
+     */
+    public function getPermalink() {
+        return Url::to(['view', 'id' => $this->id]);
     }
 }
