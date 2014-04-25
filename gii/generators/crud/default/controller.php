@@ -205,7 +205,7 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
         $this->findModel(<?= $actionParams ?>)->delete();
         Yii::$app->session->setFlash('success', '<?= $modelClass ?> has been deleted');
 
-        return $this->redirect(['index']);
+        return $this->redirect(['admin']);
     }
 
     /**

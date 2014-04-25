@@ -89,7 +89,7 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
             'softDelete' => [
                 'class' => 'kato\behaviors\SoftDelete',
                 'attribute' => 'deleted',
-                'safeMode' => true,
+                'safeMode' => false,
             ],
             'normalizeTags' => [
                 'class' => 'kato\behaviors\NormalizeTags',

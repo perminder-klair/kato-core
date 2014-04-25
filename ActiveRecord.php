@@ -60,6 +60,25 @@ class ActiveRecord extends \yii\db\ActiveRecord
     }
 
     /**
+     * This method is invoked before deleting a record.
+     * The default implementation raises the [[EVENT_BEFORE_DELETE]] event.
+     */
+    public function beforeDelete()
+    {
+        if (parent::beforeDelete()) {
+            if ($this->media) {
+                foreach ($this->media as $media)  {
+                    $media->delete();
+                }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Return basic select options for the record.
      * @param string $key
      * @param string $value
