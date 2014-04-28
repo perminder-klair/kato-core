@@ -109,22 +109,20 @@ class ActiveRecord extends \yii\db\ActiveRecord
      */
     public function listStatus()
     {
-        static $data;
-        if ($data === null) {
+        $data = [];
 
-            // create a reflection class to get constants
-            $refl = new ReflectionClass(get_called_class());
-            $constants = $refl->getConstants();
+        // create a reflection class to get constants
+        $refl = new ReflectionClass(get_called_class());
+        $constants = $refl->getConstants();
 
-            // check for status constants (e.g., STATUS_ACTIVE)
-            foreach ($constants as $constantName => $constantValue) {
+        // check for status constants (e.g., STATUS_ACTIVE)
+        foreach ($constants as $constantName => $constantValue) {
 
-                // add prettified name to dropdown
-                if (strpos($constantName, "STATUS_") === 0) {
-                    $prettyName = str_replace("STATUS_", "", $constantName);
-                    $prettyName = Inflector::humanize(strtolower($prettyName));
-                    $data[$constantValue] = $prettyName;
-                }
+            // add prettified name to dropdown
+            if (strpos($constantName, "STATUS_") === 0) {
+                $prettyName = str_replace("STATUS_", "", $constantName);
+                $prettyName = Inflector::humanize(strtolower($prettyName));
+                $data[$constantValue] = $prettyName;
             }
         }
 
@@ -149,5 +147,46 @@ class ActiveRecord extends \yii\db\ActiveRecord
      */
     public function getPermalink() {
         return Url::to(['view', 'id' => $this->id]);
+    }
+
+    /**
+     * Returns types available
+     * @param $type
+     * @return array
+     */
+    public function listTypes($type)
+    {
+        $data = [];
+        // create a reflection class to get constants
+        $refl = new ReflectionClass(get_called_class());
+        $constants = $refl->getConstants();
+
+        foreach ($constants as $constantName => $constantValue) {
+
+            // add prettified name to dropdown
+            if (strpos($constantName, $type) === 0) {
+                $prettyName = str_replace($type, "", $constantName);
+                $prettyName = Inflector::humanize(strtolower($prettyName));
+                $data[$constantValue] = $prettyName;
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Returns type label
+     * @param $type
+     * @param $constId
+     * @return bool
+     */
+    public function getTypeLabel($type, $constId)
+    {
+        if (!empty($this->$type)) {
+            $array = $this->listTypes($constId);
+            return $array[$this->$type];
+        }
+
+        return false;
     }
 }
