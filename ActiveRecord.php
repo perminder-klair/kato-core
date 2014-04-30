@@ -82,14 +82,16 @@ class ActiveRecord extends \yii\db\ActiveRecord
      * Return basic select options for the record.
      * @param string $key
      * @param string $value
+     * @param array $where
      * @return array
      */
-    public static function getSelectOptions($key = 'id', $value = 'title')
+    public static function getSelectOptions($key = 'id', $value = 'title', $where = [])
     {
-        $parents = self::find()
-            ->all();
-
-        return \yii\helpers\ArrayHelper::map($parents, $key, $value);
+        $parents = self::find();
+        if (!empty($where)) {
+            $parents->where($where);
+        }
+        return \yii\helpers\ArrayHelper::map($parents->all(), $key, $value);
     }
 
     /**
