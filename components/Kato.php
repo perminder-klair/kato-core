@@ -87,11 +87,6 @@ class Kato extends \yii\base\Component
             return false;
         }
 
-        //TODO check parent
-        if (!is_null($model->parent)) {
-            //var_dump($model->parent);exit;
-        }
-
         return $model->render();
     }
 
@@ -131,8 +126,9 @@ class Kato extends \yii\base\Component
      * Uploads the file
      * if success returns json array for media data
      * Usage: echo \Yii::$app->kato->mediaUpload();
-     *
+     * 
      * @param string $fileName
+     * @param bool $useFile
      * @return bool|string
      * @throws \yii\web\BadRequestHttpException
      */
