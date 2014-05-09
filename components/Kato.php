@@ -106,6 +106,9 @@ class Kato extends \yii\base\Component
     public function renderBlock($content = null)
     {
         if (!is_array($content)) {
+            if (empty($content) || $content == '') {
+                return false;
+            }
             $content = Json::decode($content);
         }
 
