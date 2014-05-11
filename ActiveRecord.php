@@ -169,7 +169,7 @@ class ActiveRecord extends \yii\db\ActiveRecord
             if (strpos($constantName, $type) === 0) {
                 $prettyName = str_replace($type, "", $constantName);
                 $prettyName = Inflector::humanize(strtolower($prettyName));
-                $data[$constantValue] = $prettyName;
+                $data[$constantValue] = ucwords($prettyName);
             }
         }
 
@@ -184,7 +184,7 @@ class ActiveRecord extends \yii\db\ActiveRecord
      */
     public function getTypeLabel($type, $constId)
     {
-        if (!empty($this->$type)) {
+        if (!is_null($this->$type)) {
             $array = $this->listTypes($constId);
             return $array[$this->$type];
         }
