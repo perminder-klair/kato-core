@@ -186,7 +186,9 @@ class ActiveRecord extends \yii\db\ActiveRecord
     {
         if (!is_null($this->$type)) {
             $array = $this->listTypes($constId);
-            return $array[$this->$type];
+            if (isset($array[$this->$type])) {
+                return $array[$this->$type];
+            }
         }
 
         return false;
