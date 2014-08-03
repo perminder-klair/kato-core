@@ -49,7 +49,7 @@ class Tags extends \yii\bootstrap\Widget
     private function getTags()
     {
         $return = '';
-        foreach($this->getAllTags()->all() as $tag) {
+        foreach ($this->getAllTags()->all() as $tag) {
             if (isset($_GET['tag']) && $_GET['tag'] === $tag->name) {
                 $this->options['class'] = 'tag active';
             } else {
@@ -57,6 +57,7 @@ class Tags extends \yii\bootstrap\Widget
             }
             $return .= Html::tag('li', Html::a($tag->name, ['', $this->get_real_class($this->model) . '[tags]' => $tag->name]), $this->options);
         }
+
         return $return;
     }
 
@@ -65,7 +66,8 @@ class Tags extends \yii\bootstrap\Widget
      * @param $obj
      * @return string
      */
-    private function get_real_class($obj) {
+    private function get_real_class($obj)
+    {
         $classname = get_class($obj);
 
         if (preg_match('@\\\\([\w]+)$@', $classname, $matches)) {

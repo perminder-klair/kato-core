@@ -184,6 +184,7 @@ if (($tableSchema = $generator->getTableSchema()) === false) {
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             Yii::$app->session->setFlash('success', '<?= $modelClass ?> has been updated');
+
             return $this->redirect(['update', <?= $urlParams ?>]);
         } else {
             return $this->render('@backend/views/global/update', [

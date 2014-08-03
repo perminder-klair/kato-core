@@ -35,8 +35,8 @@ use yii\db\ActiveRecord;
  * delete model from db if $safeMode = false
  * $model->delete();
  */
-class SoftDelete extends Behavior {
-
+class SoftDelete extends Behavior
+{
     const IS_DELETED = 1;
     const NOT_DELETED = 0;
 
@@ -54,7 +54,8 @@ class SoftDelete extends Behavior {
     /**
      * @inheritdoc
      */
-    public function events() {
+    public function events()
+    {
         return [ActiveRecord::EVENT_BEFORE_DELETE => 'doDelete'];
     }
 
@@ -63,8 +64,8 @@ class SoftDelete extends Behavior {
      *
      * @param Event $event
      */
-    public function doDelete($event) {
-
+    public function doDelete($event)
+    {
         // do nothing if safeMode is disabled. this will result in a normal deletion
         if (!$this->safeMode) {
             return;
@@ -78,8 +79,8 @@ class SoftDelete extends Behavior {
     /**
      * Remove (aka soft-delete) record
      */
-    public function remove() {
-
+    public function remove()
+    {
         // evaluate timestamp and set attribute
         //$timestamp = $this->evaluateTimestamp();
         $attribute = $this->attribute;
@@ -92,8 +93,8 @@ class SoftDelete extends Behavior {
     /**
      * Restore soft-deleted record
      */
-    public function restore() {
-
+    public function restore()
+    {
         // mark attribute as null
         $attribute = $this->attribute;
         $this->owner->$attribute = self::NOT_DELETED;
@@ -105,8 +106,8 @@ class SoftDelete extends Behavior {
     /**
      * Delete record from database regardless of the $safeMode attribute
      */
-    public function forceDelete() {
-
+    public function forceDelete()
+    {
         // store model so that we can detach the behavior and delete as normal
         $model = $this->owner;
         $this->detach();

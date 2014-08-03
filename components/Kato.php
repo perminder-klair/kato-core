@@ -28,7 +28,7 @@ use kartik\markdown\Markdown;
  * ```
  */
 
-class Kato extends \yii\base\Component 
+class Kato extends \yii\base\Component
 {
 
     /**
@@ -63,13 +63,14 @@ class Kato extends \yii\base\Component
         if (isset($_GET['slug'])) {
             return HtmlPurifier::process($_GET['slug']);
         }
+
         return false;
     }
 
     /**
      * Returns HTML content of block
      * Usage: \Yii::$app->kato->block('block_slug');
-     * @param null $slug
+     * @param  null                             $slug
      * @return bool
      * @throws \yii\web\BadRequestHttpException
      */
@@ -90,12 +91,10 @@ class Kato extends \yii\base\Component
         return $model->render();
     }
 
-
-
     /**
      * Renders blocks and out as html
      * Usage: \Yii::$app->kato->renderBlock($this->content);
-     * @param null $content
+     * @param  null   $content
      * @return string
      */
     public function renderBlock($content = null)
@@ -126,9 +125,9 @@ class Kato extends \yii\base\Component
      * Uploads the file
      * if success returns json array for media data
      * Usage: echo \Yii::$app->kato->mediaUpload();
-     * 
-     * @param string $fileName
-     * @param bool $useFile
+     *
+     * @param  string                           $fileName
+     * @param  bool                             $useFile
      * @return bool|string
      * @throws \yii\web\BadRequestHttpException
      */

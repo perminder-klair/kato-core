@@ -17,7 +17,6 @@ class Request extends \yii\web\Request
         return '/backend/web';
     }
 
-
     /*
         If you don't have this function, the admin site will 404 if you leave off
         the trailing slash.

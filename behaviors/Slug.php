@@ -59,6 +59,7 @@ class Slug extends Behavior
             $model = clone $this->owner;
             $uniqueValidator = new UniqueValidator;
             $uniqueValidator->validateAttribute($model, $this->slugAttributeName);
+
             return !$model->hasErrors($this->slugAttributeName);
         }
 
