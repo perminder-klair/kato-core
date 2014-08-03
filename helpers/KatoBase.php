@@ -7,7 +7,8 @@ class KatoBase extends \yii\base\Object
     /**
      * delete directory recursivly
      */
-    public static function deleteDirectory($dir, $keepDir=false) {
+    public static function deleteDirectory($dir, $keepDir=false)
+    {
         if (!file_exists($dir)) return true;
         if (!is_dir($dir)) return unlink($dir);
         foreach (scandir($dir) as $item) {
@@ -15,6 +16,7 @@ class KatoBase extends \yii\base\Object
             if (!deleteDirectory($dir.DIRECTORY_SEPARATOR.$item)) return false;
         }
         if($keepDir)
+
             return true;
         else
             return rmdir($dir);
@@ -24,7 +26,8 @@ class KatoBase extends \yii\base\Object
      * merges new Get into current url
      * use it as: url("/model/action", mergeGet($_GET, 'limit', '50'));
      */
-    public static function mergeGet($get, $key, $value) {
+    public static function mergeGet($get, $key, $value)
+    {
         if (array_key_exists($key, $get)) {
             $get[$key]=$value;
         }
@@ -38,7 +41,8 @@ class KatoBase extends \yii\base\Object
      * Usage: $returned_content = get_data('http://davidwalsh.name');
      * Alternatively, you can use the file_get_contents function remotely, but many hosts don't allow this.
      */
-    public static function get_data($url) {
+    public static function get_data($url)
+    {
         $ch = curl_init();
         $timeout = 5;
         //For your script we can also add a User Agent:
@@ -57,6 +61,7 @@ class KatoBase extends \yii\base\Object
 
         $data = curl_exec($ch);
         curl_close($ch);
+
         return $data;
     }
 
@@ -64,12 +69,13 @@ class KatoBase extends \yii\base\Object
      * Creates random string
      * default lenght is 8
      */
-    public static function genRandomString($length=8) {
+    public static function genRandomString($length=8)
+    {
         $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
         $size = strlen( $chars );
         $str='';
-        for( $i = 0; $i < $length; $i++ ) {
+        for ($i = 0; $i < $length; $i++) {
             $str .= $chars[ rand( 0, $size - 1 ) ];
         }
 
@@ -81,15 +87,16 @@ class KatoBase extends \yii\base\Object
      * returns array containing: lat, lng, postcode
      * Usage: pass in postcode
      * @param $postcode
-     * @param bool $r
+     * @param  bool             $r
      * @return array|bool|mixed
      */
-    public static function getPostcodeData($postcode, $r = false) {
+    public static function getPostcodeData($postcode, $r = false)
+    {
         $trim_postcode = str_replace(' ', '', preg_replace("/[^a-zA-Z0-9\s]/", "", strtolower($postcode)));
 
         $q_center = "http://maps.googleapis.com/maps/api/geocode/json?address=" . $trim_postcode . "&sensor=false&region=gb";
         $json_center = file_get_contents($q_center);
-        $details_center = json_decode($json_center, TRUE);
+        $details_center = json_decode($json_center, true);
 
         if($details_center['status']=='OVER_QUERY_LIMIT') return false;
 
@@ -125,7 +132,6 @@ class KatoBase extends \yii\base\Object
             );
 
         } else {
-
             return false;
 
         }
@@ -134,31 +140,32 @@ class KatoBase extends \yii\base\Object
     /**
      * Helper function to limit the words in a string
      *
-     * @param string $string the given string
-     * @param int $word_limit the number of words to limit to
+     * @param  string $string     the given string
+     * @param  int    $word_limit the number of words to limit to
      * @return string the limited string
      */
 
     public static function limit_words($string, $word_limit)
     {
         $words = explode(' ',$string);
+
         return trim(implode(' ', array_splice($words, 0, $word_limit))) .'...';
     }
 
     /**
      * Helper function to recusively get all files in a directory
      *
-     * @param string $directory start directory
-     * @param string $ext optional limit to file extensions
-     * @return array the matched files
+     * @param  string $directory start directory
+     * @param  string $ext       optional limit to file extensions
+     * @return array  the matched files
      */
     public static function get_files($directory, $ext = '')
     {
         $array_items = array();
-        if($handle = opendir($directory)){
-            while(false !== ($file = readdir($handle))){
-                if($file != "." && $file != ".."){
-                    if(is_dir($directory. "/" . $file)){
+        if ($handle = opendir($directory)) {
+            while (false !== ($file = readdir($handle))) {
+                if ($file != "." && $file != "..") {
+                    if (is_dir($directory. "/" . $file)) {
                         $array_items = array_merge($array_items, self::get_files($directory. "/" . $file, $ext));
                     } else {
                         $file = $directory . "/" . $file;
@@ -168,14 +175,15 @@ class KatoBase extends \yii\base\Object
             }
             closedir($handle);
         }
+
         return $array_items;
     }
 
     /**
      * Strip tags and limit description
      * @param $content
-     * @param string $tag
-     * @param int $wordLimit
+     * @param  string $tag
+     * @param  int    $wordLimit
      * @return string
      */
     public static function genShortDesc($content, $tag = 'p' , $wordLimit = 20)
@@ -198,13 +206,15 @@ class KatoBase extends \yii\base\Object
      *     $anal - If set to *true*, will remove all non-alphanumeric characters.
      */
 
-    public static function sanitizeFile($string, $force_lowercase = true, $anal = false) {
+    public static function sanitizeFile($string, $force_lowercase = true, $anal = false)
+    {
         $strip = array("~", "`", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "_", "=", "+", "[", "{", "]",
             "}", "\\", "|", ";", ":", "\"", "'", "&#8216;", "&#8217;", "&#8220;", "&#8221;", "&#8211;", "&#8212;",
             "â€”", "â€“", ",", "<", ".", ">", "/", "?");
         $clean = trim(str_replace($strip, "", strip_tags($string)));
         $clean = preg_replace('/\s+/', "-", $clean);
         $clean = ($anal) ? preg_replace("/[^a-zA-Z0-9]/", "", $clean) : $clean ;
+
         return ($force_lowercase) ?
             (function_exists('mb_strtolower')) ?
                 mb_strtolower($clean, 'UTF-8') :
@@ -217,12 +227,13 @@ class KatoBase extends \yii\base\Object
      * Function takes three parameter: (bytes mandatory, unit optional, decimals optional)
      *
      * @param $bytes
-     * @param string $unit
-     * @param int $decimals
-     * @param null $numberOnly
+     * @param  string $unit
+     * @param  int    $decimals
+     * @param  null   $numberOnly
      * @return string
      */
-    public static function formatBytes($bytes, $unit = "", $decimals = 2, $numberOnly = null) {
+    public static function formatBytes($bytes, $unit = "", $decimals = 2, $numberOnly = null)
+    {
         $units = array('B' => 0, 'KB' => 1, 'MB' => 2, 'GB' => 3, 'TB' => 4,
             'PB' => 5, 'EB' => 6, 'ZB' => 7, 'YB' => 8);
 

@@ -22,7 +22,7 @@ class ActiveRecord extends \yii\db\ActiveRecord
     /**
      * Relate Media
      * Usage: $model->media();
-     * @param null $type
+     * @param  null   $type
      * @return static
      */
     public function getMedia($type = null)
@@ -38,7 +38,7 @@ class ActiveRecord extends \yii\db\ActiveRecord
 
     /**
      * Actions to be taken before saving the record.
-     * @param bool $insert
+     * @param  bool $insert
      * @return bool whether the record can be saved
      */
     public function beforeSave($insert)
@@ -54,8 +54,10 @@ class ActiveRecord extends \yii\db\ActiveRecord
                 if ($this->hasAttribute('updated_by'))
                     $this->updated_by = $user_id;
             }
+
             return true;
         }
+
         return false;
     }
 
@@ -67,7 +69,7 @@ class ActiveRecord extends \yii\db\ActiveRecord
     {
         if (parent::beforeDelete()) {
             if ($this->media) {
-                foreach ($this->media as $media)  {
+                foreach ($this->media as $media) {
                     $media->delete();
                 }
             }
@@ -80,9 +82,9 @@ class ActiveRecord extends \yii\db\ActiveRecord
 
     /**
      * Return basic select options for the record.
-     * @param string $key
-     * @param string $value
-     * @param array $where
+     * @param  string $key
+     * @param  string $value
+     * @param  array  $where
      * @return array
      */
     public static function getSelectOptions($key = 'id', $value = 'title', $where = [])
@@ -91,6 +93,7 @@ class ActiveRecord extends \yii\db\ActiveRecord
         if (!empty($where)) {
             $parents->where($where);
         }
+
         return \yii\helpers\ArrayHelper::map($parents->all(), $key, $value);
     }
 
@@ -140,6 +143,7 @@ class ActiveRecord extends \yii\db\ActiveRecord
         if ($status =$this->listStatus()) {
             return $status[$this->status];
         }
+
         return false;
     }
 
@@ -147,7 +151,8 @@ class ActiveRecord extends \yii\db\ActiveRecord
      * Returns permalink to model
      * @return string
      */
-    public function getPermalink() {
+    public function getPermalink()
+    {
         return Url::to(['view', 'id' => $this->id]);
     }
 

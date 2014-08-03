@@ -21,10 +21,6 @@ echo "<?php\n";
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use backend\models\Tag;
-use kartik\widgets\Select2;
-use kartik\widgets\DatePicker;
-use yii\imperavi\Widget as ImperaviWidget;
-use kartik\widgets\SwitchInput;
 use backend\widgets\Media;
 
 $tag = new Tag;

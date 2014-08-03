@@ -5,8 +5,8 @@ namespace kato\behaviors;
 use yii\base\Behavior;
 use yii\db\ActiveRecord;
 
-class DefaultTitle extends Behavior {
-
+class DefaultTitle extends Behavior
+{
     /**
      * @var string attribute
      */
