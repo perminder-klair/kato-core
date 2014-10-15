@@ -5,13 +5,12 @@ namespace kato\behaviors;
 use yii\base\Behavior;
 use yii\db\ActiveRecord;
 
-class DefaultTitle extends Behavior {
+class ListingOrder extends Behavior {
 
     /**
      * @var string attribute
      */
-    public $attribute = "title";
-    public $defaultPrefix = 'New';
+    public $attribute = "listing_order";
 
     /**
      * @inheritdoc
@@ -32,7 +31,7 @@ class DefaultTitle extends Behavior {
         } else {
             $id = 1;
         }
-        $this->owner->{$this->attribute} = $this->defaultPrefix . '-' . $id;
+        $this->owner->{$this->attribute} = $id;
 
         return true;
     }
