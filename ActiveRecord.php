@@ -193,4 +193,17 @@ class ActiveRecord extends \yii\db\ActiveRecord
 
         return false;
     }
+
+    public function getListingOrderArray()
+    {
+        $count = static::find()
+            ->count();
+
+        $array = [];
+        for ($i = 1; $i <= $count; $i++) {
+            $array[$i] = $i;
+        }
+
+        return $array;
+    }
 }
