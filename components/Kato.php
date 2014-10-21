@@ -2,6 +2,7 @@
 
 namespace kato\components;
 
+use backend\models\Page;
 use Yii;
 use backend\models\Setting;
 use backend\models\Block;
@@ -54,6 +55,31 @@ class Kato extends \yii\base\Component
         return false;
     }
 
+    public function getBlock($name, $pageName, $layout = null)
+    {
+        if (is_null($layout)) {
+            //if it's dynamic page
+            $find = [
+                'title' => $name,
+                'parent' => $pageName,
+            ];
+        } else {
+            $find = [
+                'title' => $name,
+                'parent' => $pageName,
+                'parent_layout' => $layout,
+            ];
+        }
+
+        if ($block = Block::findOne($find)
+        ) {
+            //if block found
+            return $block->content;
+        }
+
+        return false;
+    }
+
     /**
      * returns page slug if set
      * @return string
@@ -73,7 +99,7 @@ class Kato extends \yii\base\Component
      * @return bool
      * @throws \yii\web\BadRequestHttpException
      */
-    public function block($slug = null)
+    public function globalBlock($slug = null)
     {
         if (is_null($slug)) {
             throw new BadRequestHttpException('Block slug not specified.');
@@ -98,7 +124,7 @@ class Kato extends \yii\base\Component
      * @param null $content
      * @return string
      */
-    public function renderBlock($content = null)
+    public function renderTrevorBlock($content = null)
     {
         if (!is_array($content)) {
             if (!is_array(json_decode($content,true))) {
@@ -168,5 +194,57 @@ class Kato extends \yii\base\Component
         }
 
         return false;
+    }
+
+    public function menuItems()
+    {
+        $items = [];
+
+        $pages = Page::find()
+            ->where([
+                'parent_id' => 0,
+                'menu_hidden' => Page::MENU_HIDDEN_NO,
+                'status' => Page::STATUS_PUBLISHED,
+                'deleted' => 0,
+            ])
+            ->orderBy('listing_order ASC')
+            ->all();
+
+        foreach ($pages  as $page) {
+            $items[] = $this->renderMenuItem($page);
+        }
+
+        return $items;
+    }
+
+    private function menuChildren($childern)
+    {
+        $items = [];
+        foreach ($childern as $page) {
+            $items[] = $this->renderMenuItem($page);
+        }
+
+        return $items;
+    }
+
+    private function renderMenuItem($page)
+    {
+        $item = ['label' => $page->menu_title, 'url' => $page->permalink, 'active' => false];
+
+        if ($page->type === Page::TYPE_STATIC) {
+            if ($page->slug == Yii::$app->kato->pageSlug()) {
+                $item['active'] = true;
+            }
+        } else {
+            if ('/' . $page->slug == \Yii::$app->request->getUrl()) {
+                $item['active'] = true;
+            }
+        }
+
+        if ($page->menuChildren) {
+            $item['items'] = $this->menuChildren($page->menuChildren);
+        }
+
+        return $item;
     }
 }
