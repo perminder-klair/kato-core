@@ -8,7 +8,6 @@ use yii\helpers\Url;
 
 class ActiveRecord extends \yii\db\ActiveRecord
 {
-
     /**
      * Attached Content Media, by type
      * @return static

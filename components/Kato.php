@@ -55,18 +55,18 @@ class Kato extends \yii\base\Component
         return false;
     }
 
-    public function getBlock($name, $pageName, $layout = null)
+    public function getBlock($name, $pageId, $layout = null)
     {
         if (is_null($layout)) {
             //if it's dynamic page
             $find = [
                 'title' => $name,
-                'parent' => $pageName,
+                'parent' => $pageId,
             ];
         } else {
             $find = [
                 'title' => $name,
-                'parent' => $pageName,
+                'parent' => $pageId,
                 'parent_layout' => $layout,
             ];
         }
@@ -206,6 +206,7 @@ class Kato extends \yii\base\Component
                 'menu_hidden' => Page::MENU_HIDDEN_NO,
                 'status' => Page::STATUS_PUBLISHED,
                 'deleted' => 0,
+                'revision_to' => 0,
             ])
             ->orderBy('listing_order ASC')
             ->all();
