@@ -24,6 +24,3 @@ index
 
 # vagrant (virtual machine)
 .vagrant
-
-#ignore system files
-/composer.lock
