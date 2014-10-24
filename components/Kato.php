@@ -174,7 +174,6 @@ class Kato extends \yii\base\Component
                 throw new BadRequestHttpException('Max upload size limit reached');
             }
 
-            //$media->file = $file;
             $media->filename = KatoBase::sanitizeFile($file->baseName). '-' . KatoBase::genRandomString(4) . '.' . $file->extension;
             $media->mimeType = $file->type;
             $media->byteSize = $file->size;

@@ -1,7 +1,8 @@
 {
-  "name": "kato-core",
-  "version": "0.5.1",
-  "dependencies": {
-    "angular": "1.2.26"
-  }
+    "name": "kato-core",
+    "version": "0.5.1",
+    "dependencies": {
+        "angular": "1.2.26",
+        "lightbox2": "2.7.1"
+    }
 }
