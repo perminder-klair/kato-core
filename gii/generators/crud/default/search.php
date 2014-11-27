@@ -57,6 +57,7 @@ class <?= $searchModelClass ?> extends Model
     public function search($params)
     {
         $query = <?= isset($modelAlias) ? $modelAlias : $modelClass ?>::find();
+        $query->andWhere(['deleted' => 0]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
