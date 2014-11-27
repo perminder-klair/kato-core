@@ -74,7 +74,7 @@ class Kato extends \yii\base\Component
         if ($block = Block::findOne($find)
         ) {
             //if block found
-            return $block->content;
+            return $block->render();
         }
 
         return false;
@@ -115,38 +115,6 @@ class Kato extends \yii\base\Component
 
         return $model->render();
     }
-
-
-
-    /**
-     * Renders blocks and out as html
-     * Usage: \Yii::$app->kato->renderBlock($this->content);
-     * @param null $content
-     * @return string
-     */
-    /*public function renderTrevorBlock($content = null)
-    {
-        if (!is_array($content)) {
-            if (!is_array(json_decode($content,true))) {
-                return false;
-            }
-            $content = Json::decode($content);
-        }
-
-        $blocks = '';
-        if (!empty($content)) {
-            foreach ($content['data'] as $block) {
-                if ($block['type'] === 'heading') {
-                    $blocks .= Html::tag('h2', $block['data']['text']);
-                }
-                if ($block['type'] === 'text' || $block['type'] === 'list') {
-                    $blocks .= Markdown::convert($block['data']['text']);
-                }
-            }
-        }
-
-        return $blocks;
-    }*/
 
     /**
      * Uploads the file
