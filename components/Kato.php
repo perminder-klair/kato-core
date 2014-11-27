@@ -124,7 +124,7 @@ class Kato extends \yii\base\Component
      * @param null $content
      * @return string
      */
-    public function renderTrevorBlock($content = null)
+    /*public function renderTrevorBlock($content = null)
     {
         if (!is_array($content)) {
             if (!is_array(json_decode($content,true))) {
@@ -146,7 +146,7 @@ class Kato extends \yii\base\Component
         }
 
         return $blocks;
-    }
+    }*/
 
     /**
      * Uploads the file
