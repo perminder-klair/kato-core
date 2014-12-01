@@ -8,12 +8,9 @@ use backend\models\Setting;
 use backend\models\Block;
 use yii\helpers\HtmlPurifier;
 use yii\web\BadRequestHttpException;
-use yii\helpers\Json;
 use yii\web\UploadedFile;
 use kato\helpers\KatoBase;
 use backend\models\Media;
-use yii\helpers\Html;
-use kartik\markdown\Markdown;
 
 /**
  * Usage
