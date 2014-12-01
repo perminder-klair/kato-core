@@ -11,6 +11,7 @@ use yii\web\BadRequestHttpException;
 use yii\helpers\Json;
 use yii\web\UploadedFile;
 use kato\helpers\KatoBase;
+use backend\models\Media;
 use yii\helpers\Html;
 use kartik\markdown\Markdown;
 
@@ -22,14 +23,13 @@ use kartik\markdown\Markdown;
  *
  * ```php
  * 'components' => [
- *	...
- *	'kato' => 'kato\components\Kato',
- *	...
+ *    ...
+ *    'kato' => 'kato\components\Kato',
+ *    ...
  * ]
  * ```
  */
-
-class Kato extends \yii\base\Component 
+class Kato extends \yii\base\Component
 {
 
     /**
@@ -116,53 +116,6 @@ class Kato extends \yii\base\Component
         return $model->render();
     }
 
-    /**
-     * Uploads the file
-     * if success returns json array for media data
-     * Usage: echo \Yii::$app->kato->mediaUpload();
-     * 
-     * @param string $fileName
-     * @param bool $useFile
-     * @return bool|string
-     * @throws \yii\web\BadRequestHttpException
-     */
-    public function mediaUpload($fileName = 'file', $useFile = false)
-    {
-        if (isset($_FILES[$fileName])) {
-            $media = new \backend\models\Media();
-            $uploadTime = date("Y-m-W");
-            if ($useFile === false) {
-                $file = UploadedFile::getInstanceByName($fileName);
-            } else {
-                $files = UploadedFile::getInstancesByName($fileName);
-                $file = $files[0];
-            }
-
-            if ($file->size > Yii::$app->params['maxUploadSize']) {
-                throw new BadRequestHttpException('Max upload size limit reached');
-            }
-
-            $media->filename = KatoBase::sanitizeFile($file->baseName). '-' . KatoBase::genRandomString(4) . '.' . $file->extension;
-            $media->mimeType = $file->type;
-            $media->byteSize = $file->size;
-            $media->extension = $file->extension;
-            $media->source = basename(\Yii::$app->params['uploadPath']) . '/' . $uploadTime . '/' . $media->filename;
-
-            //Save to media table
-            if ($media->save(false)) {
-                //If saved upload the file
-                $uploadPath = \Yii::$app->params['uploadPath'] .  $uploadTime;
-                if (!is_dir($uploadPath)) mkdir($uploadPath, 0777, true);
-
-                if ($file->saveAs($uploadPath . '/' . $media->filename)) {
-                    return Json::encode($media);
-                }
-            }
-        }
-
-        return false;
-    }
-
     public function menuItems()
     {
         $items = [];
@@ -178,7 +131,7 @@ class Kato extends \yii\base\Component
             ->orderBy('listing_order ASC')
             ->all();
 
-        foreach ($pages  as $page) {
+        foreach ($pages as $page) {
             $items[] = $this->renderMenuItem($page);
         }
 
@@ -214,5 +167,78 @@ class Kato extends \yii\base\Component
         }
 
         return $item;
+    }
+
+    /**
+     * Uploads the file
+     * if success returns json array for media data
+     * Usage: echo \Yii::$app->kato->mediaUpload();
+     *
+     * @param string $fileName
+     * @param bool $useFile
+     * @return bool|string
+     * @throws \yii\web\BadRequestHttpException
+     */
+    public function mediaUpload($fileName = 'file', $useFile = false)
+    {
+        if ($useFile === false) {
+            $file = UploadedFile::getInstanceByName($fileName);
+        } else {
+            $files = UploadedFile::getInstancesByName($fileName);
+            $file = $files[0];
+        }
+
+        return $this->insertMedia($file);
+    }
+
+    /**
+     * Upload to file and insert into media table
+     * @param $file
+     * @return array
+     */
+    private function insertMedia($file)
+    {
+        /**
+         * @var \yii\web\UploadedFile $file
+         */
+
+        $result = ['success' => false, 'message' => 'File could not be saved.'];
+
+        if ($file->size > Yii::$app->params['maxUploadSize']) {
+            $result['message'] = 'Max upload size limit reached';
+        }
+
+        $uploadTime = date("Y-m-W");
+        $media = new Media();
+
+        $media->filename = KatoBase::sanitizeFile($file->baseName) . '-' . KatoBase::genRandomString(4) . '.' . $file->extension;
+        $media->mimeType = $file->type;
+        $media->byteSize = $file->size;
+        $media->extension = $file->extension;
+        $media->source = basename(\Yii::$app->params['uploadPath']) . '/' . $uploadTime . '/' . $media->filename;
+
+
+        if (!is_file($media->source)) {
+            //If saved upload the file
+            $uploadPath = \Yii::$app->params['uploadPath'] . $uploadTime;
+            if (!is_dir($uploadPath)) mkdir($uploadPath, 0777, true);
+
+            if ($file->saveAs($uploadPath . '/' . $media->filename)) {
+                //Save to media table
+                if ($media->save(false)) {
+                    $result['success'] = true;
+                    $result['message'] = 'Upload Success';
+                    $result['data'] = $media;
+                } else {
+                    $result['message'] = "Database record could not be saved.";
+                }
+            } else {
+                $result['message'] = "File could not be saved.";
+            }
+        } else {
+            $result['message'] = "File already exists.";
+        }
+
+        return $result;
     }
 }

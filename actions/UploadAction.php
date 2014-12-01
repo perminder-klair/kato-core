@@ -3,7 +3,7 @@
 namespace kato\actions;
 
 use Yii;
-use yii\helpers\Json;
+use yii\web\Response;
 use backend\models\ContentMedia;
 
 class UploadAction extends \yii\base\Action
@@ -14,22 +14,44 @@ class UploadAction extends \yii\base\Action
      */
     public function run()
     {
-        //If any media upload catch it and upload it
-        $mediaJson = Yii::$app->kato->mediaUpload();
+        $result = Yii::$app->kato->mediaUpload();
 
-        $media = Json::decode($mediaJson);
+        $response = new Response();
+        $response->format = Response::FORMAT_JSON;
+        $response->setStatusCode(500);
 
-        if (isset($_GET['content_id']) && isset($_GET['content_type'])) {
-            if (is_array($media)) {
-                //Do join here
-                $contentMedia = new ContentMedia();
-                $contentMedia->content_id = $_GET['content_id'];
-                $contentMedia->content_type = $_GET['content_type'];
-                $contentMedia->media_id = $media['id'];
-                $contentMedia->save(false);
+        if ($result['success'] === true) {
+
+            if (isset($_GET['content_id']) && isset($_GET['content_type'])) {
+                $media = $result['data'];
+                if (!is_null($media)) {
+                    //Do join here
+                    $contentMedia = new ContentMedia();
+                    $contentMedia->content_id = $_GET['content_id'];
+                    $contentMedia->content_type = $_GET['content_type'];
+                    $contentMedia->media_id = $media['id'];
+                    if ($contentMedia->save(false)) {
+                        //success
+                        $response->setStatusCode(200);
+                        $response->data = $media;
+                        $response->send();
+                        Yii::$app->end();
+                    } else {
+                        $response->statusText = 'Unable to do join of media with content.';
+                        $response->send();
+                        Yii::$app->end();
+                    }
+                }
+            } else {
+                $response->statusText = 'Invalid Media data return.';
+                $response->send();
+                Yii::$app->end();
             }
-        }
 
-        echo $mediaJson;
+        } else {
+            $response->statusText = $result['message'];
+            $response->send();
+            Yii::$app->end();
+        }
     }
 }
