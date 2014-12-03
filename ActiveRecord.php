@@ -2,6 +2,8 @@
 
 namespace kato;
 
+use kato\modules\media\models\ContentMedia;
+use kato\modules\media\models\Media;
 use yii\helpers\Inflector;
 use ReflectionClass;
 use yii\helpers\Url;
@@ -14,7 +16,7 @@ class ActiveRecord extends \yii\db\ActiveRecord
      */
     public function getContentMedia()
     {
-        return $this->hasMany(\backend\models\ContentMedia::className(), ['content_id' => 'id'])
+        return $this->hasMany(ContentMedia::className(), ['content_id' => 'id'])
             ->where('content_type = :type', [':type' => $this->className()]);
     }
 
@@ -26,7 +28,7 @@ class ActiveRecord extends \yii\db\ActiveRecord
      */
     public function getMedia($type = null)
     {
-        $media = $this->hasMany(\backend\models\Media::className(), ['id' => 'media_id']);
+        $media = $this->hasMany(Media::className(), ['id' => 'media_id']);
         if ($type !== null) {
             $media->where('media_type = :type', [':type' => $type]);
         }
