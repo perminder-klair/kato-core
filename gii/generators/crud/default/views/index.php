@@ -18,7 +18,7 @@ use yii\helpers\Html;
 use <?= $generator->indexWidgetType === 'grid' ? "yii\\grid\\GridView" : "yii\\widgets\\ListView" ?>;
 
 /**
- * @var yii\web\View $this
+ * @var kato\web\View $this
  * @var yii\data\ActiveDataProvider $dataProvider
  * @var <?= ltrim($generator->searchModelClass, '\\') ?> $searchModel
  */

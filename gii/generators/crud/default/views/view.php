@@ -13,7 +13,7 @@ $urlParams = $generator->generateUrlParams();
 echo "<?php\n";
 ?>
 
-use yii\helpers\Html;
+use kato\helpers\Html;
 use yii\widgets\DetailView;
 
 /**

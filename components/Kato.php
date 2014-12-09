@@ -49,31 +49,6 @@ class Kato extends \yii\base\Component
         return false;
     }
 
-    public function getBlock($name, $pageId, $layout = null)
-    {
-        if (is_null($layout)) {
-            //if it's dynamic page
-            $find = [
-                'title' => $name,
-                'parent' => $pageId,
-            ];
-        } else {
-            $find = [
-                'title' => $name,
-                'parent' => $pageId,
-                'parent_layout' => $layout,
-            ];
-        }
-
-        if ($block = Block::findOne($find)
-        ) {
-            //if block found
-            return $block->render();
-        }
-
-        return false;
-    }
-
     /**
      * returns page slug if set
      * @return string
@@ -84,30 +59,6 @@ class Kato extends \yii\base\Component
             return HtmlPurifier::process($_GET['slug']);
         }
         return false;
-    }
-
-    /**
-     * Returns HTML content of block
-     * Usage: \Yii::$app->kato->block('block_slug');
-     * @param null $slug
-     * @return bool
-     * @throws \yii\web\BadRequestHttpException
-     */
-    public function globalBlock($slug = null)
-    {
-        if (is_null($slug)) {
-            throw new BadRequestHttpException('Block slug not specified.');
-        }
-
-        $model = Block::find()
-            ->where(['title' => $slug])
-            ->one();
-
-        if (is_null($model)) {
-            return false;
-        }
-
-        return $model->render();
     }
 
     public function menuItems()

@@ -15,7 +15,7 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 
 /**
- * @var yii\web\View $this
+ * @var kato\web\View $this
  * @var <?= ltrim($generator->searchModelClass, '\\') ?> $model
  * @var yii\bootstrap\ActiveForm $form
  */

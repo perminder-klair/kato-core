@@ -30,7 +30,7 @@ use kato\modules\media\widgets\Media;
 $tag = new Tag;
 
 /**
-* @var yii\web\View $this
+* @var kato\web\View $this
 * @var <?= ltrim($generator->modelClass, '\\') ?> $model
 * @var yii\bootstrap\ActiveForm $form
 */
