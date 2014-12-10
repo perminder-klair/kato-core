@@ -168,9 +168,9 @@ class ActiveRecord extends \yii\db\ActiveRecord
 
             // add prettified name to dropdown
             if (strpos($constantName, $type) === 0) {
-                $prettyName = str_replace($type, "", $constantName);
+                $prettyName = preg_replace('/' . $type . '/', "", $constantName, 1);
                 $prettyName = Inflector::humanize(strtolower($prettyName));
-                $data[$constantValue] = ucwords($prettyName);
+                $data[$constantValue] = trim(ucwords($prettyName));
             }
         }
 
@@ -185,16 +185,20 @@ class ActiveRecord extends \yii\db\ActiveRecord
      */
     public function getTypeLabel($type, $constId)
     {
-        if (!is_null($this->$type)) {
+        if (!is_null($type)) {
             $array = $this->listTypes($constId);
-            if (isset($array[$this->$type])) {
-                return $array[$this->$type];
+            if (isset($array[$type])) {
+                return $array[$type];
             }
         }
 
         return false;
     }
 
+    /**
+     * return array of listing order
+     * @return array
+     */
     public function getListingOrderArray()
     {
         $count = static::find()
