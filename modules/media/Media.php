@@ -8,9 +8,19 @@ use yii\web\UploadedFile;
 use kato\helpers\KatoBase;
 use kato\modules\media\models\Media as MediaModel;
 
+/**
+ * Class Media
+ * @package kato\modules\media
+ *
+ * @property string $adminView
+ * @property string $adminLayout
+ */
 class Media extends \yii\base\Module
 {
     public $controllerNamespace = 'kato\modules\media\controllers';
+
+    public $adminView = 'index';
+    public $adminLayout = null;
 
     public function init()
     {

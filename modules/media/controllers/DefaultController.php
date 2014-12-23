@@ -10,16 +10,111 @@ use yii\web\Response;
 use kato\modules\media\models\ContentMedia;
 use yii\web\Controller;
 use kato\modules\media\models\Media;
+use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
+use kato\modules\media\Media as MediaModule;
+use kato\modules\media\models\MediaSearch;
+use yii\grid\DataColumn;
 
 class DefaultController extends Controller
 {
+    public $pageTitle = 'Media';
+    public $pageIcon = 'fa fa-camera-retro fa-fw';
+
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['delete'],
+                'rules' => [
+                    [
+                        'actions' => ['index', 'update', 'delete'],
+                        'allow' => true,
+                        'roles' => ['admin'],
+                    ],
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['post'],
+                ],
+            ],
+        ];
+    }
+
     public function actionIndex()
     {
+        $meta['title'] = $this->pageTitle;
+        $meta['description'] = 'List all media';
+        $meta['pageIcon'] = $this->pageIcon;
 
-        //$module = Media::getInstance();
-        //dump($module);exit;
+        $module = MediaModule::getInstance();
+        if (!is_null($module->adminLayout)) {
+            $this->layout = $module->adminLayout;
+        }
 
-        return $this->render('index');
+        $searchModel = new MediaSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
+
+        $getColumns = [
+            ['class' => 'yii\grid\SerialColumn'],
+            [
+                'class' => DataColumn::className(),
+                'attribute' => 'title',
+                'format' => 'text',
+                'label' => 'Title',
+            ],
+            'create_time',
+            [
+                'class' => DataColumn::className(),
+                'attribute' => 'statusLabel',
+                'format' => 'text',
+                'label' => 'Status',
+            ],
+            [
+                'class' => DataColumn::className(),
+                'attribute' => 'uploadedTo',
+                'format' => 'html',
+                'label' => 'Uploaded to',
+            ],
+            ['class' => 'backend\components\ActionColumn'],
+        ];
+
+        return $this->render($module->adminView, [
+            'meta' => $meta,
+            'dataProvider' => $dataProvider,
+            'getColumns' => $getColumns,
+        ]);
+    }
+
+    /**
+     * Updates an existing Media model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param string $id
+     * @return mixed
+     */
+    public function actionUpdate($id)
+    {
+        $model = $this->findModel($id);
+        $model->title = $model->id;
+        $controllerName = $this->getUniqueId();
+
+        $meta['title'] = $this->pageTitle;
+        $meta['description'] = 'Update media';
+        $meta['pageIcon'] = $this->pageIcon;
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'Media has been updated');
+            return $this->redirect(Url::previous());
+        } else {
+            return $this->render('/global/update', [
+                'model' => $model,
+                'meta' => $meta,
+                'controllerName' => $controllerName,
+            ]);
+        }
     }
 
     /**
@@ -105,6 +200,11 @@ class DefaultController extends Controller
         }
     }
 
+    /**
+     * Update data information of media
+     * @param $id
+     * @throws NotFoundHttpException
+     */
     public function actionUpdateData($id)
     {
         if ($post = Yii::$app->request->post()) {
@@ -118,6 +218,9 @@ class DefaultController extends Controller
         echo 'false';
     }
 
+    /**
+     * Returns list of media in json format
+     */
     public function actionListMedia()
     {
         $result = array();
@@ -135,6 +238,12 @@ class DefaultController extends Controller
         echo Json::encode($result);
     }
 
+    /**
+     * Get data about requested media and return as row
+     * @param $id
+     * @return string
+     * @throws NotFoundHttpException
+     */
     public function actionRenderRow($id)
     {
         $this->layout = false;

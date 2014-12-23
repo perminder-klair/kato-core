@@ -30,6 +30,8 @@ class Media extends ActiveRecord
     public $file;
     public $cacheDir = 'cache';
 
+    public $uploadedTo = null;
+
     public function init()
     {
         parent::init();
@@ -122,6 +124,42 @@ class Media extends ActiveRecord
         return false;
     }
 
+    public function afterFind()
+    {
+        $this->getUploadedTo();
+
+        parent::afterFind();
+    }
+
+    /**
+     * Attached Content Media, by type
+     * @return static
+     */
+    public function getMediaContent()
+    {
+        return $this->hasOne(ContentMedia::className(), ['id' => 'content_id']);
+            //->where('content_type = :type', [':type' => $this->className()]);
+    }
+
+    /**
+     * Relate Content
+     * @param null $type
+     * @return static
+     */
+    public function getContent($type = null)
+    {
+        $media = $this->hasMany(Media::className(), ['id' => 'media_id']);
+        if ($type !== null) {
+            $media->where('media_type = :type', [':type' => $type]);
+        }
+        $media->via('contentMedia');
+
+        return $media;
+    }
+
+    /**
+     * Create title for media
+     */
     private function createTitle()
     {
         $title_parts = pathinfo($this->filename);
@@ -164,6 +202,11 @@ class Media extends ActiveRecord
         }
 
         return $data;
+    }
+
+    public function getUploadedTo()
+    {
+        $this->uploadedTo = 'hey';
     }
 
     public function renderPdf($data = [])
