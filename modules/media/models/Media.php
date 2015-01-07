@@ -206,7 +206,7 @@ class Media extends ActiveRecord
 
     public function getUploadedTo()
     {
-        $this->uploadedTo = 'hey';
+        $this->uploadedTo = 'todo';
     }
 
     public function renderPdf($data = [])
