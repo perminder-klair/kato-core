@@ -212,7 +212,7 @@ class Media extends ActiveRecord
     public function renderPdf($data = [])
     {
         if (isset($data['imgTag'])) {
-            $pdfPreview = Yii::$app->request->adminBaseUrl . '/img/pdf-preview.jpg';
+            $pdfPreview = Yii::$app->request->baseUrl . '/theme-assets/img/pdf-preview.jpg';
 
             $options = [];
             if (isset($data['width'])) $options['width'] = $data['width'];

@@ -1,9 +1,9 @@
 <?php
 
-namespace kato\widgets;
+namespace kato\modules\tag\widgets;
 
 use yii\helpers\Html;
-use backend\models\Tag;
+use kato\modules\tag\models\Tag;
 
 /**
  * Class Tags
@@ -25,7 +25,7 @@ class Tags extends \yii\bootstrap\Widget
      */
     public function run()
     {
-        if ($this->getAllTags()->count() <= 1) {
+        if ($this->getAllTags()->count() < 1) {
             return false;
         }
 
@@ -48,16 +48,27 @@ class Tags extends \yii\bootstrap\Widget
      */
     private function getTags()
     {
-        $return = '';
-        foreach($this->getAllTags()->all() as $tag) {
+        $allTags = $this->getAllTags()->all();
+        $tags = '';
+
+        $total=0;
+        foreach ($allTags as $tag) {
+            $total += $tag->frequency;
+        }
+
+        foreach($allTags as $tag) {
+            $weight = 8 + (int)(16*$tag->frequency/($total+10));
+            $this->options['style'] = "font-size:{$weight}pt";
+
             if (isset($_GET['tag']) && $_GET['tag'] === $tag->name) {
                 $this->options['class'] = 'tag active';
             } else {
                 $this->options['class'] = 'tag';
             }
-            $return .= Html::tag('li', Html::a($tag->name, ['', $this->get_real_class($this->model) . '[tags]' => $tag->name]), $this->options);
+            $tags .= Html::tag('li', Html::a($tag->name, ['', $this->get_real_class($this->model) . '[tags]' => $tag->name]), $this->options);
         }
-        return $return;
+
+        return $tags;
     }
 
     /**

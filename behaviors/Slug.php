@@ -49,6 +49,14 @@ class Slug extends Behavior
                     $this->owner->{$this->slugAttributeName} = $slug . $this->replacement . ++$suffix;
                 }
             }
+        } else {
+            $slug = Inflector::slug(
+                $this->owner->{$this->slugAttributeName},
+                $this->replacement,
+                $this->lowercase
+            );
+
+            $this->owner->{$this->slugAttributeName} = $slug;
         }
     }
 

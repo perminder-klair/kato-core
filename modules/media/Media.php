@@ -41,11 +41,10 @@ class Media extends \yii\base\Module
      */
     public function mediaUpload($fileName = 'file', $useFile = false)
     {
-        if ($useFile === false) {
-            $file = UploadedFile::getInstanceByName($fileName);
-        } else {
-            $files = UploadedFile::getInstancesByName($fileName);
-            $file = $files[0];
+        $file = UploadedFile::getInstanceByName($fileName);
+
+        if ($useFile !== false) {
+            $file = $file[0];
         }
 
         if (is_null($file)) {

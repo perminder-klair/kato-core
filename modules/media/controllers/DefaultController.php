@@ -118,6 +118,34 @@ class DefaultController extends Controller
     }
 
     /**
+     * If content id and type provided then do join
+     * return boolean
+     * @param $result
+     * @return bool
+     */
+    private function doMediaJoin($result)
+    {
+        if (isset($_GET['content_id']) && isset($_GET['content_type'])) {
+            $media = $result['data'];
+            if (!is_null($media)) {
+                //Do join here
+                $contentMedia = new ContentMedia();
+                $contentMedia->content_id = $_GET['content_id'];
+                $contentMedia->content_type = $_GET['content_type'];
+                $contentMedia->media_id = $media['id'];
+                if ($contentMedia->save(false)) {
+                    //success
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Uploads the file and update database
      */
     public function actionUpload()
@@ -134,28 +162,14 @@ class DefaultController extends Controller
 
         if ($result['success'] === true) {
 
-            if (isset($_GET['content_id']) && isset($_GET['content_type'])) {
-                $media = $result['data'];
-                if (!is_null($media)) {
-                    //Do join here
-                    $contentMedia = new ContentMedia();
-                    $contentMedia->content_id = $_GET['content_id'];
-                    $contentMedia->content_type = $_GET['content_type'];
-                    $contentMedia->media_id = $media['id'];
-                    if ($contentMedia->save(false)) {
-                        //success
-                        $response->setStatusCode(200);
-                        $response->data = $media;
-                        $response->send();
-                        Yii::$app->end();
-                    } else {
-                        $response->statusText = 'Unable to do join of media with content.';
-                        $response->send();
-                        Yii::$app->end();
-                    }
-                }
+            if ($this->doMediaJoin($result)) {
+                //success
+                $response->setStatusCode(200);
+                $response->data = $result['data'];
+                $response->send();
+                Yii::$app->end();
             } else {
-                $response->statusText = 'Invalid Media data return.';
+                $response->statusText = 'Unable to do join of media with content.';
                 $response->send();
                 Yii::$app->end();
             }
@@ -170,7 +184,7 @@ class DefaultController extends Controller
     /**
      * Action for file uploads via sir-trevor image block from SirTrevorWidget (input widget)
      */
-    public function SirTrevorUploadAction()
+    public function actionSirTrevorUpload()
     {
         //header('Access-Control-Allow-Origin: *');
         /**
@@ -184,14 +198,22 @@ class DefaultController extends Controller
 
         if ($result['success'] === true) {
 
-            $response->setStatusCode(200);
-            $response->data = [
-                'file' => [
-                    'url' => '/' . $result['data']['source'],
-                    'media_id' => $result['data']['id'],
-                ],
-            ];
-            $response->send();
+            if ($this->doMediaJoin($result)) {
+                //success
+                $response->setStatusCode(200);
+                $response->data = [
+                    'file' => [
+                        'url' => '/' . $result['data']['source'],
+                        'media_id' => $result['data']['id'],
+                    ],
+                ];
+                $response->send();
+            } else {
+                $response->statusText = 'Unable to do join of media with content.';
+                $response->send();
+                Yii::$app->end();
+            }
+
         } else {
             $response->statusText = $result['message'];
             $response->setStatusCode(500);
@@ -224,7 +246,19 @@ class DefaultController extends Controller
     public function actionListMedia()
     {
         $result = array();
-        if ($media = Media::find()->all()) {
+
+        if (isset($_GET['content_id']) && isset($_GET['content_type'])) {
+            //get for modal
+            $media = Media::find()
+                ->innerJoin('kato_content_media', 'kato_content_media.media_id = kato_media.id')
+                ->where(['kato_content_media.content_id' => 26])
+                ->all();
+        } else {
+            //return all media
+            $media = Media::find()->all();
+        }
+
+        if ($media) {
             foreach ($media as $data) {
                 $result[] = array(
                     'thumb' => '/' . $data->source,

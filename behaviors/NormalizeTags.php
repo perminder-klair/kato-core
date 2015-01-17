@@ -2,7 +2,7 @@
 
 namespace kato\behaviors;
 
-use backend\models\Tag;
+use kato\modules\tag\models\Tag;
 use yii\base\Behavior;
 use yii\db\ActiveRecord;
 

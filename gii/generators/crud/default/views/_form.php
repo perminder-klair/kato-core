@@ -20,7 +20,7 @@ echo "<?php\n";
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
-use backend\models\Tag;
+use kato\modules\tag\models\Tag;
 use kartik\widgets\Select2;
 use kartik\widgets\DatePicker;
 use yii\imperavi\Widget as ImperaviWidget;
