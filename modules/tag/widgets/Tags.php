@@ -60,13 +60,15 @@ class Tags extends \yii\bootstrap\Widget
             $weight = 8 + (int)(16*$tag->frequency/($total+10));
             $this->options['style'] = "font-size:{$weight}pt";
 
-            if (isset($_GET['tag']) && $_GET['tag'] === $tag->name) {
+            if (isset($_GET[$this->get_real_class($this->model)]['tags']) && $_GET[$this->get_real_class($this->model)]['tags'] === $tag->name) {
                 $this->options['class'] = 'tag active';
             } else {
                 $this->options['class'] = 'tag';
             }
-            $tags .= Html::tag('li', Html::a($tag->name, ['', $this->get_real_class($this->model) . '[tags]' => $tag->name]), $this->options);
+            $tags .= Html::tag('li', Html::a($tag->name, ['/blog/index', $this->get_real_class($this->model) . '[tags]' => $tag->name]), $this->options);
         }
+
+        $tags .= Html::tag('li', '', ['class' => 'clearfix']);
 
         return $tags;
     }
