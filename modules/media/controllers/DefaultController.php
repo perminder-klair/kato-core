@@ -250,8 +250,8 @@ class DefaultController extends Controller
         if (isset($_GET['content_id']) && isset($_GET['content_type'])) {
             //get for modal
             $media = Media::find()
-                ->innerJoin('kato_content_media', 'kato_content_media.media_id = kato_media.id')
-                ->where(['kato_content_media.content_id' => 26])
+                ->leftJoin('kato_content_media', 'kato_content_media.media_id = kato_media.id')
+                ->where(['kato_content_media.content_id' => $_GET['content_id']])
                 ->all();
         } else {
             //return all media
