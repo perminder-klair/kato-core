@@ -223,6 +223,44 @@ class DefaultController extends Controller
     }
 
     /**
+     * Action for file uploads via sir-trevor image block from SirTrevorWidget (input widget)
+     */
+    public function actionRedactorUpload()
+    {
+        //header('Access-Control-Allow-Origin: *');
+        /**
+         * @var \kato\modules\media\Media $module
+         */
+        $module = \Yii::$app->controller->module;
+        $result = $module->mediaUpload();
+
+        $response = new Response();
+        $response->format = Response::FORMAT_JSON;
+
+        if ($result['success'] === true) {
+
+            if ($this->doMediaJoin($result)) {
+                //success
+                $response->setStatusCode(200);
+                $response->data = [
+                    'filelink' => '/' . $result['data']['source'],
+                ];
+                $response->send();
+            } else {
+                $response->statusText = 'Unable to do join of media with content.';
+                $response->send();
+                Yii::$app->end();
+            }
+
+        } else {
+            $response->statusText = $result['message'];
+            $response->setStatusCode(500);
+            $response->send();
+            Yii::$app->end();
+        }
+    }
+
+    /**
      * Update data information of media
      * @param $id
      * @throws NotFoundHttpException
