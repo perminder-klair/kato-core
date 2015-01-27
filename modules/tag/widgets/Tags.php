@@ -39,7 +39,8 @@ class Tags extends \yii\bootstrap\Widget
     private function getAllTags()
     {
         return Tag::find()
-            ->where(['tag_type' => $this->model->className()]);
+            ->where(['tag_type' => $this->model->className()])
+            ->limit(20);
     }
 
     /**
