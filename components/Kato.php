@@ -4,10 +4,8 @@ namespace kato\components;
 
 use backend\models\Page;
 use Yii;
-use backend\models\Setting;
-use backend\models\Block;
+use kato\modules\setting\models\Setting;
 use yii\helpers\HtmlPurifier;
-use yii\web\BadRequestHttpException;
 
 /**
  * Usage
@@ -43,7 +41,7 @@ class Kato extends \yii\base\Component
             ->one();
 
         if (!is_null($model)) {
-            return $model->value;
+            return $model->renderOutput();
         }
 
         return false;
