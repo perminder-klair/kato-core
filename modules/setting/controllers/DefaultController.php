@@ -6,7 +6,6 @@ use Yii;
 use yii\web\Controller;
 use yii\filters\AccessControl;
 use kato\modules\setting\models\Setting;
-use yii\base\Model;
 use kato\modules\setting\Setting as SettingModule;
 
 class DefaultController extends Controller

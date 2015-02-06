@@ -14,6 +14,13 @@ class Setting extends \yii\base\Module
 
     public $adminLayout = null;
 
+    /*
+     * Categories for settings
+     */
+    public $categories = [
+        'general',
+    ];
+
     public function init()
     {
         parent::init();

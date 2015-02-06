@@ -66,14 +66,16 @@ use yii\imperavi\Widget as ImperaviWidget;
                                 <?php foreach ($settings as $index => $setting) {
                                     if ($setting->type == Setting::TYPE_TEXT_AREA) { ?>
                                         <div class="form-group field-setting-<?= $index; ?>-value">
-                                            <label class="control-label col-sm-4" for="setting-<?= $index; ?>-value"><?= $setting->defineEncoded() ?></label>
+                                            <label class="control-label col-sm-4" for="setting-<?= $index; ?>-value">
+                                                <?= $setting->defineEncoded() ?>
+                                            </label>
                                             <div class="col-sm-8">
                                                 <?= ImperaviWidget::widget([
                                                     'attribute' => "Setting[$index][value]",
                                                     'value' => $setting->value,
                                                     // Some options, see http://imperavi.com/redactor/docs/
                                                     'options' => [
-                                                        'toolbar' => 'classic',
+                                                        'buttons' => $setting->redactorOptions(),
                                                         'buttonSource' => true,
                                                         'minHeight' => 300,
                                                         'autoresize' => true,
@@ -82,19 +84,10 @@ use yii\imperavi\Widget as ImperaviWidget;
                                                         'imageManagerJson' => Yii::$app->urlManagerBackend->createUrl(['media/default/list-media', 'content_id' => $setting->id, 'content_type' => $setting->className()]),
                                                     ],
                                                     'plugins' => [
-                                                        'fullscreen',
-                                                        'table',
-                                                        'counter',
-                                                        'definedlinks',
-                                                        'fontsize',
-                                                        'textexpander',
-                                                        'video',
-                                                        'imagemanager',
                                                     ],
                                                 ]); ?>
                                             </div>
                                         </div>
-
                                     <?php } else {
                                         echo $form->field($setting, "[$index]value")->label($setting->defineEncoded());
                                     }
