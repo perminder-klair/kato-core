@@ -6,7 +6,8 @@ use kato\modules\tag\models\Tag;
 use yii\base\Behavior;
 use yii\db\ActiveRecord;
 
-class NormalizeTags extends Behavior {
+class NormalizeTags extends Behavior
+{
 
     /**
      * @var string attribute

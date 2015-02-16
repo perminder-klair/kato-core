@@ -5,7 +5,8 @@ namespace kato\behaviors;
 use yii\base\Behavior;
 use yii\db\ActiveRecord;
 
-class ListingOrder extends Behavior {
+class ListingOrder extends Behavior
+{
 
     /**
      * @var string attribute
