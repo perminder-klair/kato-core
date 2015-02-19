@@ -21,6 +21,8 @@ use kato\ActiveRecord;
  * @property string $byteSize
  * @property integer $status
  * @property string $content_type
+ * @property string $baseSource
+ * @property string $baseSourceUrl
  */
 class Media extends ActiveRecord
 {
@@ -31,6 +33,8 @@ class Media extends ActiveRecord
     public $cacheDir = 'cache';
 
     public $uploadedTo = null;
+    public $baseSource = null;
+    private $baseSourceUrl = null;
 
     public function init()
     {
@@ -40,47 +44,47 @@ class Media extends ActiveRecord
         Yii::setAlias('cachePath', Yii::$app->params['uploadPath'] . $this->cacheDir);
     }
 
-	/**
-	 * @inheritdoc
-	 */
-	public static function tableName()
-	{
-		return 'kato_media';
-	}
+    /**
+     * @inheritdoc
+     */
+    public static function tableName()
+    {
+        return 'kato_media';
+    }
 
-	/**
-	 * @inheritdoc
-	 */
-	public function rules()
-	{
-		return [
-			[['filename', 'source'], 'required'],
-			[['create_time', 'media_type', 'title'], 'safe'],
-			[['byteSize', 'status'], 'integer'],
-			[['filename', 'source', 'source_location', 'title'], 'string', 'max' => 255],
-			[['extension', 'mimeType'], 'string', 'max' => 50]
-		];
-	}
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['filename', 'source'], 'required'],
+            [['create_time', 'media_type', 'title'], 'safe'],
+            [['byteSize', 'status'], 'integer'],
+            [['filename', 'source', 'source_location', 'title'], 'string', 'max' => 255],
+            [['extension', 'mimeType'], 'string', 'max' => 50]
+        ];
+    }
 
-	/**
-	 * @inheritdoc
-	 */
-	public function attributeLabels()
-	{
-		return [
-			'id' => 'ID',
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
             'title' => 'Title',
-			'filename' => 'Filename',
-			'source' => 'Source',
-			'source_location' => 'Source Location',
-			'create_time' => 'Create Time',
-			'extension' => 'Extension',
-			'mimeType' => 'Mime Type',
-			'byteSize' => 'Byte Size',
-			'status' => 'Status',
+            'filename' => 'Filename',
+            'source' => 'Source',
+            'source_location' => 'Source Location',
+            'create_time' => 'Create Time',
+            'extension' => 'Extension',
+            'mimeType' => 'Mime Type',
+            'byteSize' => 'Byte Size',
+            'status' => 'Status',
             'media_type' => 'Media Type',
-		];
-	}
+        ];
+    }
 
     /**
      * Actions to be taken before saving the record.
@@ -113,7 +117,7 @@ class Media extends ActiveRecord
 
             //Delete from relation table
             if ($contentMedia = ContentMedia::find()->where(['media_id' => $this->id])->all()) {
-                foreach ($contentMedia as $data)  {
+                foreach ($contentMedia as $data) {
                     $data->delete();
                 }
             }
@@ -138,7 +142,7 @@ class Media extends ActiveRecord
     public function getMediaContent()
     {
         return $this->hasOne(ContentMedia::className(), ['id' => 'content_id']);
-            //->where('content_type = :type', [':type' => $this->className()]);
+        //->where('content_type = :type', [':type' => $this->className()]);
     }
 
     /**
@@ -178,6 +182,30 @@ class Media extends ActiveRecord
         return dirname(Yii::$app->params['uploadPath']) . '/' . $this->source;
     }
 
+    private function checkRemoteFile($url)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        // don't download content
+        curl_setopt($ch, CURLOPT_NOBODY, 1);
+        curl_setopt($ch, CURLOPT_FAILONERROR, 1);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        if (curl_exec($ch) !== FALSE) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function setBaseSourceUrl($url)
+    {
+        if (strpos($url, '://') === false) {
+            $url = Yii::$app->urlManager->getHostInfo() . $url;
+        }
+
+        $this->baseSource = $this->baseSourceUrl = $url;
+    }
+
     public function listMediaType()
     {
         $types = [];
@@ -194,10 +222,10 @@ class Media extends ActiveRecord
         $data = [];
         if ($this->listStatus()) {
             foreach ($this->listStatus() as $key => $value) {
-               $data[] = [
-                   'id' => $key,
-                   'text' => $value,
-               ];
+                $data[] = [
+                    'id' => $key,
+                    'text' => $value,
+                ];
             }
         }
 
@@ -209,6 +237,11 @@ class Media extends ActiveRecord
         $this->uploadedTo = 'todo';
     }
 
+    /**
+     * Renders PDF File
+     * @param array $data
+     * @return string
+     */
     public function renderPdf($data = [])
     {
         if (isset($data['imgTag'])) {
@@ -223,6 +256,11 @@ class Media extends ActiveRecord
         return '/' . $this->source;
     }
 
+    /**
+     * Renders all supported image files
+     * @param array $data
+     * @return bool|string
+     */
     public function renderImage($data = [])
     {
         $cacheFile = Yii::getAlias('@cachePath/' . $this->filename);
@@ -250,11 +288,13 @@ class Media extends ActiveRecord
 
     /**
      * Renders media
+     * @param array $data
+     * @return bool|string
      */
     public function render($data = [])
     {
-        //if file exists
-        if (!file_exists($this->baseSource)) {
+        //if file local/remote does not exists
+        if (!file_exists($this->baseSource) && !$this->checkRemoteFile($this->baseSourceUrl)) {
             return false;
         }
 
