@@ -33,7 +33,6 @@ class Media extends ActiveRecord
     public $cacheDir = 'cache';
 
     public $uploadedTo = null;
-    public $baseSource = null;
     private $baseSourceUrl = null;
 
     public function init()
@@ -203,7 +202,7 @@ class Media extends ActiveRecord
             $url = Yii::$app->urlManager->getHostInfo() . $url;
         }
 
-        $this->baseSource = $this->baseSourceUrl = $url;
+        $this->baseSourceUrl = $url;
     }
 
     public function listMediaType()

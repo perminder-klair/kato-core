@@ -7,6 +7,10 @@ use yii\web\AssetBundle;
 
 class MediaAsset extends AssetBundle
 {
+    public function __construct()
+    {
+        Yii::setAlias('@media', dirname(__FILE__));
+    }
 
     public $sourcePath = '@media/assets';
 
