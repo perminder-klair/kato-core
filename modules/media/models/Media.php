@@ -265,23 +265,29 @@ class Media extends ActiveRecord
         $cacheFile = Yii::getAlias('@cachePath/' . $this->filename);
 
         if (!isset($data['width']) && !isset($data['height'])) {
-            $image = Image::getImagine();
-            $newImage = $image->open($this->baseSource);
-            $newImage->save($cacheFile);
+            if (!file_exists(Yii::getAlias('@root') . Yii::getAlias('@cacheDir/' . $this->filename))) {
+                //only cache if not available
+                $image = Image::getImagine();
+                $newImage = $image->open($this->baseSource);
+                $newImage->save($cacheFile);
+            }
 
             return Yii::getAlias('@cacheDir/' . $this->filename);
         } else {
             $path_parts = pathinfo($cacheFile);
             $newFileName = $path_parts['filename'] . '-' . $data['width'] . '-' . $data['height'] . '.' . $path_parts['extension'];
             //http://imagine.readthedocs.org/en/latest/
-            //dump($newFileName);exit;
-            Image::thumbnail($this->baseSource, $data['width'], $data['height'])
-                ->save(Yii::getAlias('@cachePath/' . $newFileName));
-        }
-        if (isset($data['imgTag'])) {
-            return Html::img(Yii::getAlias('@cacheDir/' . $newFileName));
-        } else {
-            return Yii::getAlias('@cacheDir/' . $newFileName);
+            if (!file_exists(Yii::getAlias('@root') . Yii::getAlias('@cacheDir/' . $newFileName))) {
+                //only cache if not available
+                Image::thumbnail($this->baseSource, $data['width'], $data['height'])
+                    ->save(Yii::getAlias('@cachePath/' . $newFileName));
+            }
+
+            if (isset($data['imgTag'])) {
+                return Html::img(Yii::getAlias('@cacheDir/' . $newFileName));
+            } else {
+                return Yii::getAlias('@cacheDir/' . $newFileName);
+            }
         }
     }
 
