@@ -33,7 +33,6 @@ class Media extends ActiveRecord
     public $cacheDir = 'cache';
 
     public $uploadedTo = null;
-    private $baseSourceUrl = null;
 
     public function init()
     {
@@ -181,30 +180,6 @@ class Media extends ActiveRecord
         return dirname(Yii::$app->params['uploadPath']) . '/' . $this->source;
     }
 
-    private function checkRemoteFile($url)
-    {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        // don't download content
-        curl_setopt($ch, CURLOPT_NOBODY, 1);
-        curl_setopt($ch, CURLOPT_FAILONERROR, 1);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        if (curl_exec($ch) !== FALSE) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public function setBaseSourceUrl($url)
-    {
-        if (strpos($url, '://') === false) {
-            $url = Yii::$app->urlManager->getHostInfo() . $url;
-        }
-
-        $this->baseSourceUrl = $url;
-    }
-
     public function listMediaType()
     {
         $types = [];
@@ -263,12 +238,13 @@ class Media extends ActiveRecord
     public function renderImage($data = [])
     {
         $cacheFile = Yii::getAlias('@cachePath/' . $this->filename);
+        $baseSource = $this->baseSource;
 
         if (!isset($data['width']) && !isset($data['height'])) {
             if (!file_exists(Yii::getAlias('@root') . Yii::getAlias('@cacheDir/' . $this->filename))) {
                 //only cache if not available
                 $image = Image::getImagine();
-                $newImage = $image->open($this->baseSource);
+                $newImage = $image->open($baseSource);
                 $newImage->save($cacheFile);
             }
 
@@ -279,7 +255,7 @@ class Media extends ActiveRecord
             //http://imagine.readthedocs.org/en/latest/
             if (!file_exists(Yii::getAlias('@root') . Yii::getAlias('@cacheDir/' . $newFileName))) {
                 //only cache if not available
-                Image::thumbnail($this->baseSource, $data['width'], $data['height'])
+                Image::thumbnail($baseSource, $data['width'], $data['height'])
                     ->save(Yii::getAlias('@cachePath/' . $newFileName));
             }
 
@@ -298,9 +274,9 @@ class Media extends ActiveRecord
      */
     public function render($data = [])
     {
-        //if file local/remote does not exists
-        if (!file_exists($this->baseSource) && !$this->checkRemoteFile($this->baseSourceUrl)) {
-            return false;
+        //if file local does not exists
+        if (!file_exists($this->baseSource)) {
+            return '';
         }
 
         //check if it's pdf file

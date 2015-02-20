@@ -34,8 +34,11 @@ class MediaRender extends \yii\base\Component
         $media = new Media();
         $media->mimeType = 'image/jpeg';
         $media->filename = basename($imgSrc);
-        $media->source = $imgSrc;
-        $media->setBaseSourceUrl($imgSrc);
+        if (strpos($imgSrc,'files') !== false) {
+            $media->source =  ltrim($imgSrc);
+        } else {
+            $media->source =  'frontend/web' . $imgSrc;
+        }
 
         return $media->render($data);
     }
