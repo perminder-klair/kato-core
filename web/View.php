@@ -64,6 +64,9 @@ class View extends \yii\web\View
 
             if (isset($this->params['block']['slug'])) {
                 //get parent page id
+                /**
+                 * @var $page \backend\models\Page
+                 */
                 if ($page = Page::findOne([
                     'slug' => $this->params['block']['slug'],
                 ])) {
@@ -72,6 +75,9 @@ class View extends \yii\web\View
             }
         }
 
+        /**
+         * @var $block \backend\models\Block
+         */
         if ($block = Block::findOne($find)) {
             //if block found
             return $block->render();
