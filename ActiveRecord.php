@@ -45,15 +45,16 @@ class ActiveRecord extends \yii\db\ActiveRecord
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
+            if (isset(\Yii::$app->user)) {
+                $user_id = \Yii::$app->user->id;
 
-            $user_id = \Yii::$app->user->id;
-
-            if ($this->isNewRecord) {
-                if ($this->hasAttribute('created_by'))
-                    $this->created_by = $user_id;
-            } else {
-                if ($this->hasAttribute('updated_by'))
-                    $this->updated_by = $user_id;
+                if ($this->isNewRecord) {
+                    if ($this->hasAttribute('created_by'))
+                        $this->created_by = $user_id;
+                } else {
+                    if ($this->hasAttribute('updated_by'))
+                        $this->updated_by = $user_id;
+                }
             }
             return true;
         }
