@@ -93,6 +93,9 @@ class SitemapBehavior extends Behavior
             if (isset($urlData['images'])) {
                 $result[$n]['images'] = $urlData['images'];
             }
+            if (isset($urlData['title'])) {
+                $result[$n]['title'] = $urlData['title'];
+            }
             ++$n;
         }
         return $result;

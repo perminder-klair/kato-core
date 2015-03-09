@@ -46,10 +46,11 @@ class Sitemap extends \yii\base\Module
 
     /**
      * Build and cache a site map.
-     * @return string
-     * @throws \yii\base\InvalidConfigException
+     * @param bool $returnAsArray
+     * @return array|string
+     * @throws InvalidConfigException
      */
-    public function buildSitemap()
+    public function buildSitemap($returnAsArray = false)
     {
         $urls = $this->urls;
         foreach ($this->models as $modelName) {
@@ -64,9 +65,15 @@ class Sitemap extends \yii\base\Module
             }
             $urls = array_merge($urls, $model->generateSiteMap());
         }
+
+        if ($returnAsArray === true) {
+            return $urls;
+        }
+
         $sitemapData = $this->createControllerByID('default')->renderPartial('index', [
             'urls' => $urls
         ]);
+
         $this->cacheProvider->set($this->cacheKey, $sitemapData, $this->cacheExpire);
         return $sitemapData;
     }

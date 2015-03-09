@@ -13,12 +13,14 @@ class DefaultController extends Controller
         if (!$sitemapData = $module->cacheProvider->get($module->cacheKey)) {
             $sitemapData = $module->buildSitemap();
         }
+
         header('Content-type: application/xml');
         if ($module->enableGzip) {
             $sitemapData = gzencode($sitemapData);
             header('Content-Encoding: gzip');
             header('Content-Length: ' . strlen($sitemapData));
         }
+
         echo $sitemapData;
     }
 }
