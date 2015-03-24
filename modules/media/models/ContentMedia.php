@@ -8,7 +8,7 @@ namespace kato\modules\media\models;
  * @property integer $id
  * @property integer $content_id
  * @property integer $media_id
- * @property string $media_type
+ * @property string $content_type
  */
 class ContentMedia extends \yii\db\ActiveRecord
 {
@@ -28,7 +28,7 @@ class ContentMedia extends \yii\db\ActiveRecord
 		return [
 			[['content_id', 'media_id'], 'required'],
 			[['content_id', 'media_id'], 'integer'],
-			[['media_type'], 'string', 'max' => 50]
+			[['content_type'], 'string', 'max' => 50]
 		];
 	}
 
