@@ -26,6 +26,7 @@ class SitemapWidget extends Widget
         /** @var \kato\modules\sitemap\Sitemap $module */
         $module = $this->getModule($this->moduleName);
         $sitemapData = $module->buildSitemap(true); //as array
+
         return $this->render('sitemap', [
             'data' => $sitemapData,
         ]);

@@ -12,24 +12,6 @@ $this->registerCss("
     padding: 7px 0 2px 0;
     position: relative;
 }
-
-
-.pages-tree-item .category-block{
-    font-size: 10px;
-    margin-left: 10px;
-    padding-top: 3px;
-    color:#444444;
-    right: 0;
-    margin-right:100px;
-    top: 7px;
-    position: absolute;
-}
-
-.pages-tree-item .category-block .extra-space{
-    width:5px;
-    display:inline-block;
-}
-
 .pages-tree-item .tree-btns {
     right: 0;
     top: 7px;
