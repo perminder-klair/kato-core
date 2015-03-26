@@ -53,7 +53,9 @@ class MediaSearch extends Model
     public function search($params)
     {
         $query = Media::find();
-        $query->orderBy('id DESC');
+        if (!isset($_GET['sort'])) {
+            $query->orderBy('id DESC');
+        }
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
