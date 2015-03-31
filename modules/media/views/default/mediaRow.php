@@ -7,6 +7,7 @@ use yii\helpers\Html;
 
 /**
  * @var kato\modules\media\models\Media $media
+ * @var yii\web\View $this
  */
 
 $titleOptions = [
@@ -32,6 +33,13 @@ $statusClientOptions = [
     ],
     'source' => $media->statusDropDownList(),
 ];
+
+$this->registerCss('
+    .thumbnail .caption a {
+        max-width: 100%;
+        overflow: hidden;
+    }
+');
 
 ?>
 <div class="col-sm-3 col-md-2" id="media-<?= $media->id ?>">
