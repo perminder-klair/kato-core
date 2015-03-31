@@ -97,6 +97,11 @@ class DefaultController extends Controller
      */
     public function actionUpdate($id)
     {
+        $module = MediaModule::getInstance();
+        if (!is_null($module->adminLayout)) {
+            $this->layout = $module->adminLayout;
+        }
+
         $model = $this->findModel($id);
         $model->title = $model->id;
         $controllerName = $this->getUniqueId();
@@ -109,7 +114,7 @@ class DefaultController extends Controller
             Yii::$app->session->setFlash('success', 'Media has been updated');
             return $this->redirect(Url::previous());
         } else {
-            return $this->render('/global/update', [
+            return $this->render('update', [
                 'model' => $model,
                 'meta' => $meta,
                 'controllerName' => $controllerName,
