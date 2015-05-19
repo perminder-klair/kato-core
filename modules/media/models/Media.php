@@ -243,9 +243,13 @@ class Media extends ActiveRecord
         if (!isset($data['width']) && !isset($data['height'])) {
             if (!file_exists(Yii::getAlias('@root') . Yii::getAlias('@cacheDir/' . $this->filename))) {
                 //only cache if not available
-                $image = Image::getImagine();
-                $newImage = $image->open($baseSource);
-                $newImage->save($cacheFile);
+                try {
+                    $image = Image::getImagine();
+                    $newImage = $image->open($baseSource);
+                    $newImage->save($cacheFile);
+                } catch (\Exception $e) {
+                    //seems like image is corrupt!
+                }
             }
 
             return Yii::getAlias('@cacheDir/' . $this->filename);
@@ -255,8 +259,12 @@ class Media extends ActiveRecord
             //http://imagine.readthedocs.org/en/latest/
             if (!file_exists(Yii::getAlias('@root') . Yii::getAlias('@cacheDir/' . $newFileName))) {
                 //only cache if not available
-                Image::thumbnail($baseSource, $data['width'], $data['height'])
-                    ->save(Yii::getAlias('@cachePath/' . $newFileName));
+                try {
+                    Image::thumbnail($baseSource, $data['width'], $data['height'])
+                        ->save(Yii::getAlias('@cachePath/' . $newFileName));
+                } catch (\Exception $e) {
+                    //seems like image is corrupt!
+                }
             }
 
             if (isset($data['imgTag'])) {
