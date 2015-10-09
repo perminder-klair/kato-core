@@ -237,6 +237,7 @@ class Media extends ActiveRecord
      */
     public function renderImage($data = [])
     {
+        ini_set('memory_limit', '240M');
         $cacheFile = Yii::getAlias('@cachePath/' . $this->filename);
         $baseSource = $this->baseSource;
 
