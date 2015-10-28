@@ -19,6 +19,7 @@ class Setting extends \kato\ActiveRecord
 {
     const TYPE_TEXT_AREA = 'text-area';
     const TYPE_TEXT_FIELD = 'text-field';
+    const TYPE_DROP_DOWN = 'drop-down';
 
     /**
      * @inheritdoc
@@ -118,5 +119,27 @@ class Setting extends \kato\ActiveRecord
         return ['html', 'formatting', 'bold', 'italic', 'deleted',
             'unorderedlist', 'orderedlist', 'outdent', 'indent',
             'image', 'file', 'link', 'alignment', 'horizontalrule'];
+    }
+
+    /**
+     * Returns options for dropdown field
+     * Eg: can be set in database as comma separated in column options as (key:value): true:Yes, false:No
+     * @return array
+     */
+    public function dropDownOptions()
+    {
+        $result = [];
+
+        if (strlen($this->options) > 1) {
+            $options = str_replace(' ', '', $this->options);
+            $optionsArray = explode(",", $options);
+
+            foreach ($optionsArray as $key => $val) {
+                $data = explode(':', $val);
+                $result[$data[0]] = $data[1];
+            }
+        }
+
+        return $result;
     }
 }

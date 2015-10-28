@@ -88,7 +88,9 @@ use yii\imperavi\Widget as ImperaviWidget;
                                                 ]); ?>
                                             </div>
                                         </div>
-                                    <?php } else {
+                                    <?php } else if ($setting->type == Setting::TYPE_DROP_DOWN) {
+                                        echo $form->field($setting, "[$index]value")->dropDownList($setting->dropDownOptions())->label($setting->defineEncoded());
+                                    } else {
                                         echo $form->field($setting, "[$index]value")->label($setting->defineEncoded());
                                     }
                                 } ?>
