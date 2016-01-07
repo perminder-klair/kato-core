@@ -212,4 +212,14 @@ class ActiveRecord extends \yii\db\ActiveRecord
 
         return $array;
     }
+
+    public function softDelete()
+    {
+        if ($this->hasAttribute('deleted')) {
+            $this->deleted = 1;
+            $this->save(false);
+        }
+
+        return false;
+    }
 }

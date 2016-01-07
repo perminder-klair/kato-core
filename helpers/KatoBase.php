@@ -74,7 +74,6 @@ class KatoBase extends \yii\base\Object
         }
 
         return $str;
-
     }
 
     /**
