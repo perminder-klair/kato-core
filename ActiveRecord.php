@@ -217,7 +217,7 @@ class ActiveRecord extends \yii\db\ActiveRecord
     {
         if ($this->hasAttribute('deleted')) {
             $this->deleted = 1;
-            $this->save(false);
+            return $this->save(false);
         }
 
         return false;
