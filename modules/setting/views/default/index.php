@@ -64,7 +64,9 @@ use yii\imperavi\Widget as ImperaviWidget;
                             <div class="tab-pane fade in <?php echo $catCount==1?'active':''; ?>" id="<?php echo $category; ?>">
 
                                 <?php foreach ($settings as $index => $setting) {
-                                    if ($setting->type == Setting::TYPE_TEXT_AREA) { ?>
+                                    if ($setting->type == Setting::TYPE_TEXT_AREA && $setting->redactorOptions()[0] === 'code') {
+                                        echo $form->field($setting, "[$index]value")->textarea(['rows' => 8])->label($setting->defineEncoded());
+                                    } else if ($setting->type == Setting::TYPE_TEXT_AREA) { ?>
                                         <div class="form-group field-setting-<?= $index; ?>-value">
                                             <label class="control-label col-sm-4" for="setting-<?= $index; ?>-value">
                                                 <?= $setting->defineEncoded() ?>
