@@ -18,7 +18,7 @@ class BowerAsset extends \yii\web\AssetBundle
     ];
 
     public $js = [
-        'angular/angular.min.js',
+        //'angular/angular.min.js',
         'lightbox2/js/lightbox.min.js',
     ];
 
